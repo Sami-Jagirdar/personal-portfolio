@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import tailWindCssAnimate from "tailwindcss-animate";
 
 export default {
     darkMode: ["class"],
@@ -7,56 +8,58 @@ export default {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  mode: 'jit',
   theme: {
   	extend: {
+		container: {
+			center: true,
+			padding: "5vw",
+		},
+		dropShadow: {
+			spotlight: [
+				'0 0 15px rgba(216, 64, 74, 0.6)',  // Base red (matches the text color with a glow effect)
+				'0 0 20px rgba(253, 95, 124, 0.8)', // Soft pinkish-red layer
+				'0 0 40px rgba(250, 126, 117, 0.66)', // Subtle warm glow for contrast
+			],
+		  },
+		  fontFamily: {
+			primary: 'var(--font-roboto-mono)',
+		},
   		colors: {
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
-  			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
-  			},
-  			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
-  			},
-  			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
-  			},
-  			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
-  			},
-  			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
-  			},
-  			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
-  			},
-  			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
-  			},
-  			border: 'hsl(var(--border))',
-  			input: 'hsl(var(--input))',
-  			ring: 'hsl(var(--ring))',
-  			chart: {
-  				'1': 'hsl(var(--chart-1))',
-  				'2': 'hsl(var(--chart-2))',
-  				'3': 'hsl(var(--chart-3))',
-  				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
-  			}
-  		},
+			primary:'#050101',
+			accent:{
+				DEFAULT: '#d8404a',
+				hover: '#650000',
+			}
+		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+		screens: {
+			sm: '640px',
+			md: '768px',
+			lg: '960px',
+			xl: '1200px'
+		},
+		keyframes: {
+			spotlight: {
+			  '0%': { 
+				color: 'rgb(255, 255, 255)',
+				filter: 'drop-shadow(0 0 0px rgba(216, 64, 74, 0))',
+			  },
+			  '100%': {
+				color: 'rgb(216, 64, 74)',
+				filter: 'drop-shadow(0 0 15px rgba(216, 64, 74, 0.6)) drop-shadow(0 0 20px rgba(253, 95, 124, 0.8)) drop-shadow(0 0 40px rgba(250, 126, 117, 0.66))'
+			  }
+			}
+		  },
+		  animation: {
+			'spotlight': 'spotlight 0.5s ease-out forwards',
+		  },
+		
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailWindCssAnimate],
 } satisfies Config;
