@@ -1,12 +1,18 @@
+"use-client";
+
 import {projects} from '../projectsData';
 import CMPUT412 from '../CMPUT412/page';
+import { use } from "react";
+
 
 interface Params {
   id: string;
 }
 
-const ProjectPage = ({ params }: { params: Params }) => {
-    const project = projects.find((proj) => proj.id === params.id);
+const ProjectPage = ({ params }: { params: Promise<Params> }) => {
+
+    const { id } = use(params);
+    const project = projects.find((proj) => proj.id === id);
 
   if (!project) {
     return <div>Project not found</div>;
