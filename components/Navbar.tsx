@@ -25,7 +25,7 @@ const pathname = usePathname();
             text-lg
             transition-all
             duration-500
-            ${pathname === link.path 
+            ${pathname === link.path || pathname.startsWith(`${link.path}/`) 
               ? "text-accent drop-shadow-spotlight animate-spotlight"
               : "text-white"}
           `}>

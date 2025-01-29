@@ -1,0 +1,24 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import Exercise1 from "../exercises/ex1";
+import ExerciseModal from "@/components/Exercise412Modal";
+import { use } from "react";
+
+const exerciseComponents: Record<string, React.FC> = {
+  ex1: Exercise1,
+};
+
+export default function ExercisePage({ params }: { params: Promise<{ id: string }> }) {
+    const router = useRouter();
+    const { id } = use(params); // This should now work correctly
+    const ExerciseComponent = exerciseComponents[id];
+
+    if (!ExerciseComponent) return <div className="text-white">Exercise not found</div>;
+
+    return (
+        <ExerciseModal onClose={() => router.push("/projects/CMPUT412")}>
+            <ExerciseComponent />
+        </ExerciseModal>
+    );
+}

@@ -26,11 +26,15 @@ export default {
 			primary: 'var(--font-roboto-mono)',
 		},
   		colors: {
-			primary:'#050101',
+			primary:'#19191a',
 			accent:{
 				DEFAULT: '#d8404a',
 				hover: '#650000',
-			}
+			},
+			card: {
+				DEFAULT: '#080808',
+				hover: '#1a2a2a',
+			},
 		},
   		borderRadius: {
   			lg: 'var(--radius)',
