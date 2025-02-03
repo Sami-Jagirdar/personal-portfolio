@@ -175,7 +175,7 @@ export default function Exercise1() {
         We were now able to move the Duckiebot in a near straight line.
       </p>
 
-      <div className= "mt-6">
+      <div className= "relative mt-6 w-full max-w-lg mx-auto">
         <iframe
           width="800"
           height="450"
@@ -199,7 +199,7 @@ export default function Exercise1() {
         Again, we ran the keyboard control command and pressed <code>a</code> to start lane following.
       </p>
 
-      <div className="mt-6">
+      <div className="relative mt-6 w-full max-w-lg mx-auto">
         <iframe
           width="800"
           height="450"
@@ -217,21 +217,17 @@ export default function Exercise1() {
       <p className="mt-2">
         As you can see, the Duckiebot moves around the lane detecting the white tape (lane borders) using its sensors. 
         The Duckiebot uses computer vision to detect lane markings and stay within the boundaries. It relies on a set of sensors to track the lane&apos;s edges, adjust its speed, and make decisions at corners. The left turn at intersections is part of its path-following algorithm for safe navigation.
-      </p>
-      <p className="mt-2">
-        For now, we used the default configuration and algorithms built into the Duckiebot to perform this demonstration.
+        <br/>For now, we used the default configuration and algorithms built into the Duckiebot to perform this demonstration. <br/>
       </p>
 
-
-      <div className="p-6 text-white">
-      <h2 className="text-2xl font-bold">6: Duckiebot Programming Basics</h2>
+      <h2 className="text-2xl font-bold mt-8">6. Duckiebot Programming Basics</h2>
       <p>
         We learned the basics of making a program that runs on the Duckiebot.
         First, we cloned a Duckietown development template repository. We modified the Dockerfile and wrote a simple Hello World program in Python. 
         Then we built the container image for the program and loaded it onto the Duckiebot. Afterward, we ran the program on the Duckiebot.
       </p>
 
-      <div className="mt-6">
+      <div className="relative mt-6 w-full max-w-lg mx-auto">
         <Image
           src="/CMPUT412ex1-Hello_from_csc22926.png"
           alt="Duckiebot csc22926 says Hello!"
@@ -240,17 +236,16 @@ export default function Exercise1() {
           className="rounded-lg shadow-lg"
         />
         <p className="text-center text-sm text-gray-400 mt-2">Fig 6.1: Duckiebot csc22926 says Hello!</p>
-      </div>
+    </div>
 
-      <h3 className="text-lg font-medium mt-6">Explanation of Fig 6.1</h3>
+    <h3 className="text-lg font-medium mt-6">Explanation of Fig 6.1</h3>
       <p className="mt-2">
         The program runs on the Duckiebot, and our program specifically used an environment variable that would contain the name of the Duckiebot,
         which is not hardcoded anywhere in our program. Only the Duckiebot would know the name stored in the environment variable. 
         The program correctly retrieves the name and prints: <code>Hello from csc22926!</code>.
       </p>
-    </div>
 
-    <h2 className="text-2xl font-bold">Exercise 7 - Lessons and Challenges</h2>
+    <h2 className="text-2xl font-bold mt-8">7. Lessons and Challenges</h2>
       <p>
         Through this exercise, I learned a lot about how Duckietown works, particularly in terms of Docker&apos;s role when programming robots. 
         I also learned the importance of calibration and how crucial it is to ensure the robot moves correctly before deploying any algorithms to perform specific tasks.
@@ -268,6 +263,40 @@ export default function Exercise1() {
 
         Overall, I had a lot of fun and I have so much to learn. I look forward to the next exercises!
       </p>
+
+      <h2 className="text-2xl font-bold mt-8">8. References & Acknowledgements</h2>
+        <h3 className="text-xl font-semibold mt-6">References</h3>
+        <ul className="list-disc list-inside mt-2">
+          <li>
+            The exercise was completed by following the Duckiebot tutorials:<span> </span>
+            <a 
+              href="https://docs.duckietown.com/daffy/opmanual-duckiebot/intro.html" 
+              className="text-blue-400 hover:underline"
+            >
+              <span> </span>Duckiebot Operational Manual<span> </span>  
+            </a> 
+            and<span>  </span>
+            <a 
+              href="https://docs-old.duckietown.org/daffy/duckietown-robotics-development/out/basic_development.html" 
+              className="text-blue-400 hover:underline"
+            >
+              Duckietown Robotics Development
+            </a>.
+          </li>
+        </ul>
+
+        <h3 className="text-xl font-semibold mt-6">Acknowledgements</h3>
+        <p className="mt-2">
+          The exercise was completed in collaboration with <span className="text-accent">Basia Ofovwe</span>.
+        </p>
+        <p className="mt-2">
+          I would also like to acknowledge the LI <span className="text-accent">Adam Parker</span> and the TAs 
+          <span className="text-accent"> Monta</span> and <span className="text-accent">Dikshant </span> 
+          for their assistance with troubleshooting Duckiebot commands and explaining calibration concepts, 
+          which significantly improved my understanding and helped me complete this write-up.
+        </p>
+
+
 
     </div>
   );
