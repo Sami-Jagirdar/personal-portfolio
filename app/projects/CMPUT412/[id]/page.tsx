@@ -2,11 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import Exercise1 from "../exercises/ex1";
+import Exercise2 from "../exercises/ex2";
 import ExerciseModal from "@/components/Exercise412Modal";
 import { use } from "react";
 
 const exerciseComponents: Record<string, React.FC> = {
   ex1: Exercise1,
+  ex2: Exercise2,
 };
 
 export default function ExercisePage({ params }: { params: Promise<{ id: string }> }) {

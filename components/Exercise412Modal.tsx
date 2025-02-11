@@ -13,17 +13,36 @@ interface ExerciseModalProps {
 export default function ExerciseModal({ children, onClose }: ExerciseModalProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const handlePrint = () => {
+    const modalContent = document.querySelector(".modal-content") as HTMLElement;
+    
+    if (modalContent) {
+      modalContent.style.overflow = "visible";
+      modalContent.style.maxHeight = "none";
+    }
+  
+    setTimeout(() => {
+      window.print();
+      
+      // Restore after print
+      if (modalContent) {
+        modalContent.style.overflow = "auto";
+        modalContent.style.maxHeight = "80vh";
+      }
+    }, 500); // Delay ensures styles apply before printing
+  };
+  
+
   return (
-    <div
-      className={`fixed inset-0 flex justify-center items-center bg-black bg-opacity-80 
-      ${isExpanded ? "p-0" : "p-8"} transition-all duration-300`}
-    >
+    <div className={`fixed inset-0 flex justify-center items-center bg-black bg-opacity-80 
+      ${isExpanded ? "p-0" : "p-8"} transition-all duration-300 modal-print`}>
+    
       <div
         className={`bg-primary text-white rounded-xl shadow-2xl w-full flex flex-col
-        ${isExpanded ? "max-w-full h-full" : "max-w-2xl max-h-[80vh]"} transition-all duration-300`}
+        ${isExpanded ? "max-w-full h-full" : "max-w-3xl max-h-[90vh]"} transition-all duration-300`}
       >
         {/* Header - fixed height */}
-        <div className="p-4 flex justify-between items-center border-b border-white/20 shrink-0">
+        <div className="p-2 flex justify-between items-center border-b border-white/20 shrink-0">
           <button 
             onClick={() => setIsExpanded(!isExpanded)} 
             className="text-white hover:bg-white/10 p-2 rounded-lg transition-colors"
@@ -42,19 +61,20 @@ export default function ExerciseModal({ children, onClose }: ExerciseModalProps)
         </div>
 
         {/* Content - scrollable */}
-        <div className="flex-1 overflow-auto min-h-0 p-4">
+        <div className="flex-1 overflow-auto min-h-0 p-4 modal-content">
           {children}
         </div>
 
         {/* Footer - fixed height */}
-        <div className="p-4 border-t border-white/20 flex justify-end shrink-0">
-          <button 
-            onClick={() => window.print()} 
-            className="flex items-center gap-2 text-white hover:bg-white/10 px-4 py-2 rounded-lg transition-colors"
-          >
-            <IoPrint className="w-5 h-5" />
-            Print
-          </button>
+        <div className="p-0 border-t border-white/20 flex justify-end shrink-0">
+        <button 
+          onClick={handlePrint} 
+          className="flex items-center gap-2 text-white hover:bg-white/10 px-4 py-2 rounded-lg transition-colors"
+        >
+          <IoPrint className="w-5 h-5" />
+          Print
+        </button>
+
         </div>
       </div>
     </div>

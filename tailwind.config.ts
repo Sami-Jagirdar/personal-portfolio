@@ -35,6 +35,7 @@ export default {
 				DEFAULT: '#080808',
 				hover: '#1a2a2a',
 			},
+			silver: '#c0c0c0',
 		},
   		borderRadius: {
   			lg: 'var(--radius)',

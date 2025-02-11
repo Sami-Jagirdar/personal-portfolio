@@ -1,42 +1,72 @@
 "use client";
 import Image from 'next/image';
 
-export default function Exercise1() {
+export default function Exercise2() {
   return (
     <div className="p-6 text-white">
-      <h2 className="text-3xl font-bold">Exercise 1 - Duckiebot Operation Basics</h2>
+      <h1 className="text-3xl font-bold">Exercise 2 - ROS Development & Kinematics</h1>
       <h3 className="text-xl text-silver mt-4">Sami Jagirdar [ccid: jagirdar]   <span className='text-accent'>|</span>    Basia Ofovwe [ccid: ofovwe]</h3>
-      <p className='mt-4'>This exercise involved learning the basic skills and knowledge required to operate a Duckiebot.</p>
-      <p className="mt-4">Technologies used: <span className='text-accent'>Python, DuckieTown Shell, Docker</span> </p>
+      <p className='mt-4'>In this exercise, we explored the fundamentals of ROS and developed ROS-based software for DuckieTown using a Duckiebot. We performed some basic ROS operations including some basic OpenCV image processing. <br/>
+        The main task involved utilizing the Duckiebot’s odometry (differential drive) and applying kinematic equations to control its movement along predefined trajectories and analyzing its motion. <br/>
+        Additionally, we created an LED service to control the LED lights on the Duckiebot depending on its state during its motion.</p>
+      <p className="mt-4">Technologies used: <span className='text-accent'>Python, ROS, OpenCV</span> </p>
 
-      <h3 className="text-xl font-semibold mt-6">1. Duckiebot Setup</h3>
-      <p className="mt-2">
-        The first step was to set up the Duckiebot. We were provided an assembled Duckiebot with a burned SD card. 
-        Our Duckiebot is named <span className="text-accent">csc22926</span>, but we needed to install the required software dependencies to connect to the robot and operate it.
-      </p>
-      <p className="mt-4">
-        This involved installing <strong>Docker</strong>, <strong>Duckietown Shell (dts)</strong>, and creating a <strong>Duckietown account</strong>.
-      </p>
+      <h2 className="text-2xl font-semibold mt-6">Part 1. ROS Basics</h2>
+      <h3 className='mt-4 text-xl'>1.1. ROS Core Concepts</h3>
 
-      <h4 className="text-lg font-medium mt-6">Discovering the Duckiebot</h4>
-      <p className="mt-2">
-        Next, we turned on the Duckiebot and ensured we could discover it on the network using the <code className="bg-gray-800 px-2 py-1 rounded text-sm">dts fleet discover</code> command.
-      </p>
-      <p className="mt-2">
-        We were able to see our Duckiebot&apos;s name <span className="text-accent">csc22926</span> in the list of discovered Duckiebots.
-      </p>
+        <section className='mt-4'>
+            <h3 className='text-l font-semibold text-accent'>Node</h3>
+            <p>A ROS node is an independent process that performs a specific task, such as reading sensors or controlling motors.</p>
+            <p>Nodes communicate via topics, services, and actions, enabling modular system design.</p>
+            <b>Example:</b> A camera node captures images, while another node processes the image data.
+        </section>
+        <section className='mt-4'>
+            <h3 className='text-l font-semibold text-accent'>Topic</h3>
+            <p>A ROS topic is a communication channel where nodes exchange messages asynchronously in a publish-subscribe manner.</p>
+            <p>Used for continuous data streams like sensor readings and control commands.</p>
+            <b>Example:</b> A camera node publishes images to the <code className="bg-gray-800 px-2 py-1 rounded text-sm">/camera/image_raw</code> topic, and an analysis node subscribes.
+        </section>
+        <section className='mt-4'>
+            <h3 className='text-l font-semibold text-accent'>Service</h3>
+            <p>A ROS service enables synchronous request-response communication between nodes.</p>
+            <p>Used for on-demand operations like retrieving system status or resetting sensors.</p>
+            <b>Example:</b> <code className="bg-gray-800 px-2 py-1 rounded text-sm">/get_temperature</code > service returns the current temperature.
+        </section>
+        <section className='mt-4'>
+            <h3 className='text-l font-semibold text-accent'>Message</h3>
+            <p>A ROS message is a structured data format used for exchanging information between nodes.</p>
+            <p>Messages are defined in <code className="bg-gray-800 px-2 py-1 rounded text-sm">.msg</code> files and contain headers and fields like numbers, strings, or nested structures.</p>
+            <b>Example: </b>The <code className="bg-gray-800 px-2 py-1 rounded text-sm">/wheels_driver_node/wheels_cmd</code> topic uses <code className="bg-gray-800 px-2 py-1 rounded text-sm">duckietown_msgs.WheelsCmdStamped</code> type that has <code className="bg-gray-800 px-2 py-1 rounded text-sm">vel_left</code> & <code className="bg-gray-800 px-2 py-1 rounded text-sm">vel_right</code> fields to control the throttle of each wheel.
+        </section>
+        <section className='mt-4'>
+            <h3 className='text-l font-semibold text-accent'>Bag</h3>
+            <p>A ROS bag is a file format for recording and replaying ROS messages, useful for debugging and analysis.</p>
+            <p>Recorded data can be replayed or plotted to analyze the expected behaviour of the robot</p>
+            <b>Example:</b> <code className="bg-gray-800 px-2 py-1 rounded text-sm">rosbag record</code> is used to capture robot’s sensor readings are recorded in a <code className="bg-gray-800 px-2 py-1 rounded text-sm">.bag</code> file for offline debugging. <code className="bg-gray-800 px-2 py-1 rounded text-sm">rosbag play</code> can be used to play the recorded data to simulate real time operation
+        </section>
 
-      <p className="mt-4">Our Duckiebot was now ready to be operated!</p>
+        <h3 className='mt-4 text-xl'>1.2. Using ROS with Duckiebots</h3>
+        <p className='mt-4'>Duckiebots are ROS-based robots that use ROS nodes to control their movement, sensors, and other functionalities. The Duckiebot software stack is designed to work with ROS, making it easy to develop and test algorithms for autonomous driving.</p>
+        <p className='mt-4'>To use ROS with Duckiebots we setup the <a 
+              href="https://docs.duckietown.com/daffy/devmanual-software/beginner/ros/create-project.html" 
+              className="text-blue-400 hover:underline"
+            >
+              DTROS
+            </a> interface using the DTProject template repository that also allows us to create <span className="text-accent">catkin packages</span> that can built into docker images and ran in containers on the duckiebot </p>
 
-      <div className="relative mt-6 w-full max-w-lg mx-auto">
-        <Image
-          src="/CMPUT412.jpg"
-          alt="Duckiebot Setup"
-          width={800}
-          height={600}
-          className="rounded-lg shadow-lg"
-        />
-      </div>
+        <p className='mt-4'>We then wrote our first publisher and subscriber nodes. The publisher node sends a &quot;Hello...&quot; message to a custom topic called <code className="bg-gray-800 px-2 py-1 rounded text-sm">/chatter</code></p>
+        <p>The subscriber node subscribes to the aforementioned topic and reads the data being published</p>
+
+
+        <div className="relative mt-6 w-full max-w-lg mx-auto">
+            <Image
+            src="/CMPUT412.jpg"
+            alt="Duckiebot Setup"
+            width={800}
+            height={600}
+            className="rounded-lg shadow-lg"
+            />
+        </div>
       <p className="text-center text-sm text-gray-400 mt-2">Fig 1.1 Duckiebot CSC22926</p>
 
       <h2 className="text-xl font-semibold mt-8">2. Duckiebot Operation</h2>
