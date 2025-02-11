@@ -6,9 +6,6 @@ export default function Exercise2() {
     <div className="p-6 text-white">
       <h1 className="text-3xl font-bold">Exercise 2 - ROS Development & Kinematics</h1>
       <h3 className="text-xl text-silver mt-4">Sami Jagirdar [ccid: jagirdar]   <span className='text-accent'>|</span>    Basia Ofovwe [ccid: ofovwe]</h3>
-      <p className='mt-4'>In this exercise, we explored the fundamentals of ROS and developed ROS-based software for DuckieTown using a Duckiebot. We performed some basic ROS operations including some basic OpenCV image processing. <br/>
-        The main task involved utilizing the Duckiebot’s odometry (differential drive) and applying kinematic equations to control its movement along predefined trajectories and analyzing its motion. <br/>
-        Additionally, we created an LED service to control the LED lights on the Duckiebot depending on its state during its motion.</p>
       <p className="mt-4">Technologies used: <span className='text-accent'>Python, ROS, OpenCV</span> </p>
 
       <h2 className="text-2xl font-semibold mt-6">Part 1. ROS Basics</h2>
@@ -49,7 +46,7 @@ export default function Exercise2() {
         <p className='mt-4'>Duckiebots are ROS-based robots that use ROS nodes to control their movement, sensors, and other functionalities. The Duckiebot software stack is designed to work with ROS, making it easy to develop and test algorithms for autonomous driving.</p>
         <p className='mt-4'>To use ROS with Duckiebots we setup the <a 
               href="https://docs.duckietown.com/daffy/devmanual-software/beginner/ros/create-project.html" 
-              className="text-blue-400 hover:underline"
+              className="text-blue hover:underline"
             >
               DTROS
             </a> interface using the DTProject template repository that also allows us to create <span className="text-accent">catkin packages</span> that can be built into docker images and ran in containers on the duckiebot </p>
@@ -263,9 +260,97 @@ export default function Exercise2() {
 
         <h3 className='mt-6 text-xl'>3.2. Node 2: State Management and LED Service</h3>
         <p className='mt-4'>We created an LED service that changes the color of the LED lights on the Duckiebot based on its state</p>
-        <p>Node 1 would publish the current state of the robot to a custom topic <code>/led_state</code></p>
+        <p>Node 1 would publish the current state of the robot to a custom topic <code className="bg-gray-800 px-2 py-1 rounded text-sm">/led_state</code></p>
+        <p>The LED service node (Node 2) would subscribe to the aforementioned topic and based on the state publish a message to the <code className="bg-gray-800 px-2 py-1 rounded text-sm">/led_emitter_node/led_pattern</code> topic to set the color of the Duckiebot&apos;s LED lights</p>
 
+        <p>The LED State Mappings are as follows:</p>
+        <ul className='list-disc ml-6'>
+            <li>State 1: Stop - Robot is stationary for 5 seconds --&gt; LED Lights are <span className='text-accent'>RED</span></li>
+            <li>State 2: Trace &quot;D&quot; Path - Robot is moving along the D trajectory --&gt; LED Lights are <span className='text-green'>GREEN</span></li>
+            <li>State 3: Return to Start - Robot has reached the starting position and is orienting itself. It waits for 5 seconds at starting position --&gt; LED Lights are <span className='text-blue'>BLUE</span></li>
+        </ul>
+
+        <div className="relative mt-6 w-full max-w-lg mx-auto display: flex justify-center items-center">
+          <iframe
+            width="800"
+            height="450"
+            src="https://youtube.com/embed/VLSgZ93kVdk"
+            title="Duckiebot D task"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="rounded-lg shadow-lg"
+          ></iframe>
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">Fig 3.2: <span className='text-accent'>csc22926</span> travels autonomously along a D shaped path with different LED light colors for different states</p>
+
+        <h3 className='mt-6 text-xl'>2.4. Plotting Trajectory</h3>
+        <p className='mt-4'>We also plotted the trajectory of the Duckiebot in the world frame as it followed the D-shaped path</p>
+
+        <div className="relative mt-6 w-full max-w-3xl mx-auto flex justify-center">
+            <Image
+                    src="/D_animation.gif"
+                    alt="D-shaped Trajectory Plot"
+                    width={600}
+                    height={400}
+                    className="rounded-lg shadow-lg"
+                    />
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">Fig 3.3: Trajectory of the D-shaped path according to <span className='text-accent'>csc22926</span>(not necessarily the same as actual path travelled). </p>
+        <p className='mt-2 text-sm'>* Note that the start point and the point where the actual motion starts is different because the x and y values are calculated based on timestamps. Since the bot was stationary for the first 5 seconds, the timestamp values increased leading to a jump in position when it actually starts moving. Also axes are not actually in meters, that&apos;s a typo</p>
+
+        <p className='mt-4'>Time elapsed: <span className='text-accent'>47.54 secs</span></p>
         
+        <section className='mt-4'>
+            <h3 className='text-l text-accent'> Is our duckiebot able to track what you planned according to your plan? If not, then
+            why?</h3>
+            <p className='text-yellow-400 mt-2'>The Duckiebot has a Will of its own</p>
+            <ul className='list-disc ml-6'>
+            <li>Our Duckiebot tracks a a reasonable D-shape based on the assignment specifications and the given surface. However, it is NOT actually tracking the same path that was planned for it. We can see that the trajectory plot, which is based on our assigned values, calculations and algorithms, traces a considerably different path than what we see in the actual video.</li>
+            <li>There are several reasons. The major reason is the compounding of deviations (discussed in sections 2.2 and 2.3) during the duckiebot&apos;s journey. As the errors due to factors like wheel drift, slipping, sliding, callibration, etc compound, the duckiebot would veer more and more off track. </li>
+            <li>So, even if our calculations are perfect for the given fixed trajectory, it is highly unlikely that the Duckiebot would follow the same D path</li>
+            <li>In order to make the Duckiebot follow a reasonable D path, we accounted for potential errors by reducing the amount of rotation at hard corners, reducing the arc length it needs to travel at curved corners, giving one of its wheels a higher velocity for one subregion of the trajectory, etc</li>
+            <li>This is why we can see that the trajectory plot does not plot an ideal D, because our algorithm itself is introducing intentional errors to combat the real life deviations</li>
+            </ul>
+        </section>
+
+        <h2 className="text-2xl font-semibold mt-6">Part 4. Conclusion and Challenges</h2>
+          <h3 className='mt-4 text-xl'>4.1. Conclusion</h3>
+          <p className='mt-4'>In this exercise, we explored the fundamentals of ROS and developed ROS-based software for DuckieTown using a Duckiebot. We performed some basic ROS operations including some basic OpenCV image processing. <br/>
+          The main task involved utilizing the Duckiebot’s odometry (differential drive) and applying kinematic equations to control its movement along predefined trajectories and analyzing its motion. <br/>
+          We plotted the trajectory of the Duckiebot in the world frame based on the odometry information and analyzed the differences between the actual and expected paths.
+          Additionally, we created an LED service to control the LED lights on the Duckiebot depending on its state during its motion.</p>
+
+          <h3 className='mt-6 text-xl'>4.2. Challenges</h3>
+          <p className='mt-4'>This exercise had quite a few challenges, mostly with finetuning our calculations to make the duckiebot actually move in D-shaped path</p>
+          <p>Accounting for the error in one region of the trajectory would introduce new errors in other parts of the trajectory</p>
+          <p>We spent many, many iterations running our program with slight modifications to eventually get the motion of the Duckiebot that we see in the video.</p>
+          <p className='mt-2'>Another challenge was plotting the trajectory using the /wheel_cmd velocity data which are actually throttle values and not velocity in m/s which our kinematics equations expect</p>
+          <p>It took us a while to figure out that this was the case and we eventually settled on adding a scaling factor to the received velocity values to get an accuract trajectory plot</p>
+
+          <h3 className='mt-6 text-xl'>4.3. Reflection</h3>
+          <p>Overall, while we encountered significant challenges, this lab was very rewarding. We learned a lot about ROS in a single exercise and the satisfaction of finally getting the duckiebot to start following reasonable D-shaped paths was second to none.</p>
+          <p>It was also a great exercise in understanding the importance of odometry and kinematics in controlling the motion of a robot while understanding the complexities of deviations when relying on these metrics</p>
+          <p>Finally, the LED service was a fun addition to the project and a great way to visualize the state of the robot</p>
+          <p>I look forward to our future exercises where we leverage more of Duckiebot&apos;s sensors and apply more complex algorithms to control its motion!</p>
+          
+          <h2 className="text-2xl font-semibold mt-6">Part 5. References and Acknowledgments</h2>
+          <p className='mt-4'>The following resources were used in the completion of this exercise:</p>
+          <ul className='list-disc ml-6'>
+            <li>ROS Wiki for understanding ROS core concepts: <a href="https://wiki.ros.org/ROS/Tutorials/" className="text-blue hover:underline">https://wiki.ros.org/ROS/Tutorials</a></li>
+            <li>Duckietown Documentation for developing in ROS: <a href="https://docs.duckietown.com/daffy/devmanual-software/beginner/ros/index.html" className="text-blue hover:underline">https://docs.duckietown.com/daffy/devmanual-software/beginner/ros/index.html</a></li>
+            <li>ChatGPT helped with further strengthening ROS concepts and also providing an understanding of common ros commands like rostopic list, rosparam, rosnode, etc</li>
+            <li>ChatGPT also helped provide the <b>animation code</b> for the trajectory plot (The actual trajectory equations and related code were developed by the main collaborators for this exercise)</li>
+            <li>Kinematics equations were based on the following references: <a href="https://docs-old.duckietown.org/daffy/duckietown-robotics-development/out/odometry_modeling.html" className='text-blue hover:underline'>https://docs-old.duckietown.org/daffy/duckietown-robotics-development/out/odometry_modeling.html</a> and the CMPUT 412 January 16, 2025 Lecture Slides on Differential Drive Kinematics</li>
+          </ul>
+
+          <p className="mt-4">
+          We would like to acknowledge the LI <span className="text-accent">Adam Parker</span> and the TAs 
+          <span className="text-accent"> Dikshant, Jasper</span> and <span className="text-accent">Monta </span> 
+          for their assistance with explaining odometry concepts and possible causes for deviations, 
+          along with helping in understanding what commands to use for recording data into bag files and providing other ROS related tips.
+        </p>
+
         
     </div>
   );
