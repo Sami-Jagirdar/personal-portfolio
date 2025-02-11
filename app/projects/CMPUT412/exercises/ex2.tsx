@@ -45,290 +45,228 @@ export default function Exercise2() {
             <b>Example:</b> <code className="bg-gray-800 px-2 py-1 rounded text-sm">rosbag record</code> is used to capture robot’s sensor readings are recorded in a <code className="bg-gray-800 px-2 py-1 rounded text-sm">.bag</code> file for offline debugging. <code className="bg-gray-800 px-2 py-1 rounded text-sm">rosbag play</code> can be used to play the recorded data to simulate real time operation
         </section>
 
-        <h3 className='mt-4 text-xl'>1.2. Using ROS with Duckiebots</h3>
+        <h3 className='mt-6 text-xl'>1.2. Using ROS with Duckiebots</h3>
         <p className='mt-4'>Duckiebots are ROS-based robots that use ROS nodes to control their movement, sensors, and other functionalities. The Duckiebot software stack is designed to work with ROS, making it easy to develop and test algorithms for autonomous driving.</p>
         <p className='mt-4'>To use ROS with Duckiebots we setup the <a 
               href="https://docs.duckietown.com/daffy/devmanual-software/beginner/ros/create-project.html" 
               className="text-blue-400 hover:underline"
             >
               DTROS
-            </a> interface using the DTProject template repository that also allows us to create <span className="text-accent">catkin packages</span> that can built into docker images and ran in containers on the duckiebot </p>
+            </a> interface using the DTProject template repository that also allows us to create <span className="text-accent">catkin packages</span> that can be built into docker images and ran in containers on the duckiebot </p>
 
         <p className='mt-4'>We then wrote our first publisher and subscriber nodes. The publisher node sends a &quot;Hello...&quot; message to a custom topic called <code className="bg-gray-800 px-2 py-1 rounded text-sm">/chatter</code></p>
         <p>The subscriber node subscribes to the aforementioned topic and reads the data being published</p>
 
-
-        <div className="relative mt-6 w-full max-w-lg mx-auto">
+        <div className="relative mt-6 w-full max-w-3xl mx-auto flex justify-center">
             <Image
-            src="/CMPUT412.jpg"
-            alt="Duckiebot Setup"
-            width={800}
-            height={600}
-            className="rounded-lg shadow-lg"
-            />
+                    src="/ex2p1_2-publisher.png"
+                    alt="/chatter Topic Info"
+                    width={400}
+                    height={300}
+                    className="rounded-lg shadow-lg"
+                    />
         </div>
-      <p className="text-center text-sm text-gray-400 mt-2">Fig 1.1 Duckiebot CSC22926</p>
-
-      <h2 className="text-xl font-semibold mt-8">2. Duckiebot Operation</h2>
-      <p className="mt-2">
-        Before we began moving the robot, we first logged into the Duckietown dashboard at 
-        <code className="bg-gray-800 px-2 py-1 rounded text-sm">csc22926.local</code> using our Duckietown account token.
-      </p>
-
-      <h3 className="text-lg font-medium mt-6">Controlling the Duckiebot</h3>
-      <p className="mt-2">
-        We then used the following command to connect to the Duckiebot over WiFi and control it using our keyboard:
-      </p>
-      <p className="mt-2">
-        <code className="bg-gray-800 px-2 py-1 rounded text-sm block w-fit">dts duckiebot keyboard_control csc22926</code>
-      </p>
-      <p className="mt-2">
-        On the dashboard, we were able to see its camera feed and motor signals as it moved.
-      </p>
-
-      <div className="relative mt-6 w-full max-w-lg mx-auto">
-        <Image
-          src="/CMPUT412_ex1.png"
-          alt="Duckietown Dashboard"
-          width={800}
-          height={600}
-          className="rounded-lg shadow-lg"
-        />
-        <p className="text-center text-sm text-gray-400 mt-2">Fig 2.1 Duckietown Dashboard</p>
-      </div>
-
-      <h3 className="text-lg font-medium mt-6">Explanation of Fig 2.1</h3>
-      <p className="mt-2">
-        The image contains the motor speed, linear speed, and angular speed. At the time of taking the screenshot,  
-        we had just started driving the bot in a straight line at full power, hence the high linear speed and zero angular speed.
-      </p>
-      <p className="mt-2">
-        We can also see the Duckiebot&apos;s camera POV. I hope <span className="text-accent">csc22926</span> had a nice view of me...
-      </p>
-
-      <h2 className="text-2xl font-bold mt-8">3. Duckiebot Intrinsic Calibration</h2>
-      <p className="mt-4">
-        The Duckiebot camera&apos;s POV is not necessarily an accurate representation of the world from an outside reference.  
-        It may distort the image and have an inaccurate pixel projection. Intrinsic calibration focuses on the camera&apos;s internal characteristics and how it forms images. 
-        It accounts for the camera&apos;s lens distortion, focal length, and sensor properties. The calibration process generates parameters that help correct image distortions and ensure accurate pixel measurements, 
-        which is crucial for the robot to perceive distances and shapes correctly.
-      </p>
-      <p className="mt-4">
-        We next performed intrinsic calibration by using a fixed size and rigid checkerboard as a reference and using the following command:
-        <code className="bg-accent/10 p-2 rounded text-accent">dts duckiebot calibrate_intrinsics csc22926</code>
-        <br/>We then moved the Duckiebot camera around the checkerboard in different axes to perform the calibration. Finally, we generated the intrinsic calibration parameters required to correct the camera&apos;s POV.
-      </p>
-
-      <div className="relative mt-6 w-full max-w-lg mx-auto">
-        <Image
-          src="/CMPUT412_ex1_intrinsic_params.png"
-          alt="Intrinsic Calibration Parameters"
-          width={800}
-          height={600}
-          className="rounded-lg shadow-lg"
-        />
-        <p className="text-center text-sm text-gray-400 mt-2">Fig 3.1 Intrinsic Calibration Parameters</p>
-      </div>
-
-      <h3 className="text-lg font-medium mt-6">Explanation of Fig 3.1</h3>
-      <p className="mt-2">
-        Images are essentially matrices, and the robot is receiving an input matrix from its camera. The .yaml file contains parameters that are used in various matrix operations to correct the input matrix to represent an accurate view of the world. 
-      </p>
-      <p className="mt-2">
-        For example, the <code className="bg-accent/10 p-2 rounded text-accent">projection_matrix</code> describes how 3D points are projected onto the 2D image plane, and the <code className="bg-accent/10 p-2 rounded text-accent">rectification_matrix</code> accounts for correcting camera tilt.
-      </p>
-
-      <h2 className="text-2xl font-bold mt-8">4. Duckiebot Extrinsic Calibration</h2>
-      <p className="mt-4">
-        Extrinsic calibration deals with the camera&apos;s position and orientation relative to the Duckiebot&apos;s environment (like the ground plane). 
-        It determines how to transform between the camera&apos;s view and real-world coordinates. This is essential for the robot to understand where it is in space and navigate accurately in Duckietown.
-      </p>
-      <p className="mt-4">
-        So, we performed extrinsic calibration next, which involved placing the Duckiebot at the right position and the right angle with respect to the calibration checkerboard. 
-        Then we performed the calibration using the following command:
-        <code className="bg-accent/10 p-2 rounded text-accent">dts duckiebot calibrate_extrinsics csc22926</code>
-        <br/> The required extrinsic calibration parameters were generated.
-      </p>
-
-      <div className="relative mt-6 w-full max-w-lg mx-auto">
-        <Image
-          src="/CMPUT412_ex1_extrinsic_params.png"
-          alt="Extrinsic Calibration Parameters"
-          width={800}
-          height={600}
-          className="rounded-lg shadow-lg"
-        />
-        <p className="text-center text-sm text-gray-400 mt-2">Fig 4.1 Extrinsic Calibration Parameters</p>
-      </div>
-
-      <h3 className="text-lg font-medium mt-6">Explanation of Fig 4.1</h3>
-      <p className="mt-2">
-        The homography parameters, yet again, represent a transformation matrix that helps the robot understand its position relative to the ground. 
-        It basically maps where the ground is in the camera&apos;s point of view (POV).
-      </p>
-
-      <h2 className="text-2xl font-bold mt-8">5. Duckiebot Wheels Calibration</h2>
-      <p className="mt-4">
-        The last bit of calibration has to do with the kinematics of Duckiebot. Even slight differences in the left and right motors, wheel sizes, etc. can prevent the bot from moving in a straight line.
-        To ensure that it moves in a straight line, we performed a trim calibration.
-        Trim acts as a bias correction between the right and left wheels. If the robot veers left, a positive trim adds more power to the left wheel to mitigate rotation towards the left side. A negative trim works similarly for the right wheel.
-      </p>
-
-      <p className="mt-4">
-        Duckietown has many tools it uses to move the Duckiebot and analyze its motion.
-        To use these tools, we run the following command:
-        <code className="bg-accent/10 p-2 rounded text-accent">dts start_gui_tools csc22926</code>
-      </p>
-
-      <p className="mt-4">
-        Then, we used ROS to modify data related to motion. In our case, it was to set the trim parameter to 0.01 using the following command:
-        <code className="bg-accent/10 p-2 rounded text-accent">rosparam set /csc22926/kinematics_node/trim 0.01</code>
-        We then saved the kinematics calibration settings.
-      </p>
-
-      <div className="relative mt-6 w-full max-w-lg mx-auto">
-        <Image
-          src="/CMPUT412_ex1_kinematics_calibration_params.png"
-          alt="Wheel Calibration Parameters"
-          width={800}
-          height={600}
-          className="rounded-lg shadow-lg"
-        />
-        <p className="text-center text-sm text-gray-400 mt-2">Fig 5.1 Kinematics Calibration Parameters</p>
-      </div>
-
-      <h3 className="text-lg font-medium mt-6">Explanation of Fig 5.1</h3>
-      <p className="mt-2">
-        These represent the parameters used by ROS to manipulate how the Duckiebot moves. We can see the trim value of 0.01. We also notice parameters like <code className="bg-accent/10 p-2 rounded text-accent">omega_max</code> (max angular speed) and <code className="bg-accent/10 p-2 rounded text-accent">v_max</code> (max linear speed).
-      </p>
-
-      <p className="mt-4">
-        We were now able to move the Duckiebot in a near straight line.
-      </p>
-
-      <div className= "relative mt-6 w-full max-w-lg mx-auto">
-        <iframe
-          width="800"
-          height="450"
-          src="https://www.youtube.com/embed/Iy8P9iYBFjc"
-          title="Straight line motion"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="rounded-lg shadow-lg"
-        ></iframe>
-        <p className="text-center text-sm text-gray-400 mt-2">Video 5.1: Straight line motion</p>
-      </div>
-
-      <h3 className="text-lg font-medium mt-6">Explanation of Video 5.1</h3>
-      <p className="mt-2">
-        The Duckiebot was initially steering to the left, so we added a positive 0.01 trim and we can see in the video that it moves nearly in a straight line. It starts veering to the right slightly at the end, but factors like road material, the tape, and slight calibration errors can cause this.
-      </p>
-
-      <p className="mt-4">
-        We then made the Duckiebot move in a rectangular lane.
-        Again, we ran the keyboard control command and pressed <code>a</code> to start lane following.
-      </p>
-
-      <div className="relative mt-6 w-full max-w-lg mx-auto">
-        <iframe
-          width="800"
-          height="450"
-          src="https://www.youtube.com/embed/wl_25OYTh-M"
-          title="Duckiebot Lane Following"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="rounded-lg shadow-lg"
-        ></iframe>
-        <p className="text-center text-sm text-gray-400 mt-2">Fig 5.2: Duckiebot Lane Following</p>
-      </div>
-
-      <h3 className="text-lg font-medium mt-6">Explanation of Video 5.2</h3>
-      <p className="mt-2">
-        As you can see, the Duckiebot moves around the lane detecting the white tape (lane borders) using its sensors. 
-        The Duckiebot uses computer vision to detect lane markings and stay within the boundaries. It relies on a set of sensors to track the lane&apos;s edges, adjust its speed, and make decisions at corners. The left turn at intersections is part of its path-following algorithm for safe navigation.
-        <br/>For now, we used the default configuration and algorithms built into the Duckiebot to perform this demonstration. <br/>
-      </p>
-
-      <h2 className="text-2xl font-bold mt-8">6. Duckiebot Programming Basics</h2>
-      <p>
-        We learned the basics of making a program that runs on the Duckiebot.
-        First, we cloned a Duckietown development template repository. We modified the Dockerfile and wrote a simple Hello World program in Python. 
-        Then we built the container image for the program and loaded it onto the Duckiebot. Afterward, we ran the program on the Duckiebot.
-      </p>
-
-      <div className="relative mt-6 w-full max-w-lg mx-auto">
-        <Image
-          src="/CMPUT412ex1-Hello_from_csc22926.png"
-          alt="Duckiebot csc22926 says Hello!"
-          width={800}
-          height={600}
-          className="rounded-lg shadow-lg"
-        />
-        <p className="text-center text-sm text-gray-400 mt-2">Fig 6.1: Duckiebot csc22926 says Hello!</p>
-    </div>
-
-    <h3 className="text-lg font-medium mt-6">Explanation of Fig 6.1</h3>
-      <p className="mt-2">
-        The program runs on the Duckiebot, and our program specifically used an environment variable that would contain the name of the Duckiebot,
-        which is not hardcoded anywhere in our program. Only the Duckiebot would know the name stored in the environment variable. 
-        The program correctly retrieves the name and prints: <code>Hello from csc22926!</code>.
-      </p>
-
-    <h2 className="text-2xl font-bold mt-8">7. Lessons and Challenges</h2>
-      <p>
-        Through this exercise, I learned a lot about how Duckietown works, particularly in terms of Docker&apos;s role when programming robots. 
-        I also learned the importance of calibration and how crucial it is to ensure the robot moves correctly before deploying any algorithms to perform specific tasks.
-      </p>
-
-      <h3 className="text-xl font-semibold mt-6">Challenges</h3>
-      <p className="mt-2">
-        One of the biggest challenges was patience! Sometimes getting a response from the robot could take a while, especially during the calibration process.
-        The calibration itself was a time-consuming process where I had to move the robot around several times before it could generate appropriate calibration parameters.
-        Another challenge was with adjusting the trim value for straight-line motion. Initially, I used too large values, but after experimenting, I settled on a trim value of 0.01.
-      </p>
-      
-      <p className="mt-4">
-        I also faced challenges with installing Ubuntu, which led me to ultimately use the desktop in the lab to perform all my tasks.
-
-        Overall, I had a lot of fun and I have so much to learn. I look forward to the next exercises!
-      </p>
-
-      <h2 className="text-2xl font-bold mt-8">8. References & Acknowledgements</h2>
-        <h3 className="text-xl font-semibold mt-6">References</h3>
-        <ul className="list-disc list-inside mt-2">
-          <li>
-            The exercise was completed by following the Duckiebot tutorials:<span> </span>
-            <a 
-              href="https://docs.duckietown.com/daffy/opmanual-duckiebot/intro.html" 
-              className="text-blue-400 hover:underline"
-            >
-              <span> </span>Duckiebot Operational Manual<span> </span>  
-            </a> 
-            and<span>  </span>
-            <a 
-              href="https://docs-old.duckietown.org/daffy/duckietown-robotics-development/out/basic_development.html" 
-              className="text-blue-400 hover:underline"
-            >
-              Duckietown Robotics Development
-            </a>.
-          </li>
-        </ul>
-
-        <h3 className="text-xl font-semibold mt-6">Acknowledgements</h3>
-        <p className="mt-2">
-          The exercise was completed in collaboration with <span className="text-accent">Basia Ofovwe</span>.
-        </p>
-        <p className="mt-2">
-          I would also like to acknowledge the LI <span className="text-accent">Adam Parker</span> and the TAs 
-          <span className="text-accent"> Monta</span> and <span className="text-accent">Dikshant </span> 
-          for their assistance with troubleshooting Duckiebot commands and explaining calibration concepts, 
-          which significantly improved my understanding and helped me complete this write-up.
+        <p className="text-center text-sm text-gray-400 mt-2">
+                Fig 1.1 Custom ROS Topic <code className="bg-gray-800 px-2 py-1 rounded text-sm">/chatter</code> Info.
+                The publisher node sends <span className='text-accent'>&apos;Hello from ROBOTNAME&apos;</span> messages to this topic
         </p>
 
+        <div className="relative mt-6 w-full mx-auto flex gap-4 justify-center">
+                <Image
+                src="/ex2p1.2-subscriber-node-info.png"
+                alt="Subscriber Node Info"
+                width={450}
+                height={300}
+                className="rounded-lg shadow-lg"
+                />
+                <Image
+                src="/ex2p1.2-subscriber-output.PNG"
+                alt="Subscriber Output"
+                width={450}
+                height={300}
+                className="rounded-lg shadow-lg"
+                />
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">
+                Fig 1.2 Subscriber Node Info showing it has subscribed to the <code className="bg-gray-800 px-2 py-1 rounded text-sm">/chatter</code> topic. It also shows that the publisher node is connected to the topic.
+                <br/> Fig 1.3 Subscriber Node Output showing the messages received from the publisher node
+        </p>
 
+        <h3 className='mt-6 text-xl'>1.3. Using OpenCV in ROS and Basic Image Processing</h3>
+        <p className='mt-4'>Next, we created a node that subscribes to the <code className="bg-gray-800 px-2 py-1 rounded text-sm">/csc22926/camera_node/image/compressed</code> topic. Then using OpenCV, grayscales this image and annotates it. </p>
+        <p>The modified image is published to a custom topic <code className="bg-gray-800 px-2 py-1 rounded text-sm">/csc22926/camera_node/annotated_image/compressed</code></p>
+        <div className="relative mt-6 w-full max-w-3xl mx-auto flex justify-center">
+            <Image
+                    src="/ex2p1-annotated-image-rqt.png"
+                    alt="/Annoted Image rqt-viewer"
+                    width={600}
+                    height={800}
+                    className="rounded-lg shadow-lg"
+                    />
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">
+                Fig 1.4 Annotated & Grayscaled Image in rqt-viewer which is started using the <code className="bg-gray-800 px-2 py-1 rounded text-sm">rqt_image_view</code> command. rqt viewer allows use to view <code className="bg-gray-800 px-2 py-1 rounded text-sm">CompressedImage</code> type data from the <code className="bg-gray-800 px-2 py-1 rounded text-sm">/csc22926/camera_node/annotated_image/compressed</code> topic.
+                The annotation includes the ROBOT NAME and the size of the image.
+        </p>
 
+      <h2 className="text-2xl font-semibold mt-6">Part 2. Odometry Using Wheel Encoders</h2>
+        <h3 className='mt-4 text-xl'>2.1. Odometry Background</h3>
+        <p className='mt-4'>Odometry is the use of data from motion sensors to estimate change in position over time. In differential drive robots like Duckiebots, odometry is calculated using wheel encoders that measure wheel rotation.</p>
+        <p>Particularly, the wheel encoders measure the incremental ticks rotated by each wheel since being turned on. For the DT series bots, the total ticks per revolution, <span className='text-accent'>N_TOTAL_TICKS = 135</span>. Also, the wheel radius, <span className='text-accent'>WHEEL_RADIUS = 0.0318m</span> and distance between the center of wheels, <span className='text-accent'>WHEELBASE = 0.09m</span></p> 
+        <p>Therefore, we can derive the total distance travelled by each wheel as:</p>
+        <p> (1) <span className='text-accent'>DISTANCE = (2 * π * WHEEL_RADIUS * ticks) / N_TOTAL_TICKS</span></p>
+        <p className='mt-4'>The angle rotated by the bot can be calculated based on the distance travelled by each wheel for some time period</p>
+        <p> (2) <span className='text-accent'>θ = (ARC_DISTANCE_RIGHT - ARC_DISTANCE_LEFT) / WHEELBASE</span></p>
+        <p className='text-sm'>* Arc distance is essentially distance travelled by wheel</p>
+
+        <p className='mt-4'>We can read the ticks by subscribing to the <code className="bg-gray-800 px-2 py-1 rounded text-sm">/csc22926/left_wheel_encoder_node/tick</code> and <code className="bg-gray-800 px-2 py-1 rounded text-sm">/csc22926/right_wheel_encoder_node/tick</code> topics</p>
+        <p>We can also provide velocity to each of the wheels by publishing the throttle for each wheel to the <code className="bg-gray-800 px-2 py-1 rounded text-sm">/csc22926/wheels_driver_node/wheels_cmd</code> topic</p>
+
+        <h3 className='mt-6 text-xl'>2.2. Straight Line Task</h3>
+        <p className='mt-4'>Using the information above, our first task was to make the duckiebot move 1.25m in a straight line forward and then in reverse along the same path.</p>
+
+        <div className="relative mt-6 w-full max-w-lg mx-auto display: flex justify-center items-center">
+          <iframe
+            width="800"
+            height="450"
+            src="https://youtube.com/embed/JOI1PE31nmg"
+            title="Duckiebot Straight Line Task"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="rounded-lg shadow-lg"
+          ></iframe>
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">Fig 2.1: <span className='text-accent'>csc22926</span> travels autonomously in a straight line for 1.25m forwards and backwards</p>
+
+        <section className='mt-4'>
+            <h3 className='text-l text-accent'>Why is there a difference between the actual and desired location?</h3>
+            <p>There are several reasons for the difference between the actual and desired location:</p>
+            <ul className='list-disc ml-6'>
+                <li>Wheel slippage: The wheels may slip on the surface, causing the robot to move less than expected. Our equations are based on the constraint that the bot is undergoing perfect rolling, but this is not realistic</li>
+                <li>Wheel alignment: The wheels may not be perfectly aligned or incorrectly callibrated (one wheel receives more power than the other), causing the robot to veer off course.</li>
+                <li>Wheel Radius: The distance travelled measurement depends on the wheel radius as well which has to be measured manually or via an experiment. An inaccurate measurement can lead to incorrect calculation of actual distance travelled.</li>
+            </ul>
+            <p>Because of these reasons, even though our program detects that the wheels have rotated enough ticks to cover our desired distance, the actual distance covered by the robot can differ. In our case, the bot travelled a distance slightly less than 1.25m as expected.</p>
+        </section>
+
+        <section className='mt-4'>
+            <h3 className='text-l text-accent'>What speed did we use?</h3>
+            <p>We used a speed of 0.3 (i.e a throttle of 0.3) for both wheels for the forward and reverse motion. </p>
+        </section>
+
+        <section className='mt-4'>
+            <h3 className='text-l text-accent'>What happens when we increase or decrease the speed?</h3>
+            <p>Increasing the speed would make it more likely for the robot to slip and not cover the full distance, whereas a slower speed may see the robot wheels not having enough torque to rotate on the mat surface as the friction may be too strong. Note that the speed we provide is essentially the throttle, so there are forces and torques involved</p>
+        </section>
+
+        <h3 className='mt-6 text-xl'>2.3. Rotation Task</h3>
+        <p className='mt-4'>Next, we made the duckiebot rotate 90 degrees clockwise and then 90 degrees counterclockwise.</p>
+
+        <div className="relative mt-6 w-full max-w-lg mx-auto display: flex justify-center items-center">
+          <iframe
+            width="800"
+            height="450"
+            src="https://youtube.com/embed/dgfw90tV9Lo"
+            title="Duckiebot Rotation Task"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="rounded-lg shadow-lg"
+          ></iframe>
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">Fig 2.2: <span className='text-accent'>csc22926</span> autonomously rotates 90 degree clockwise and then 90 degree counter-clockwise on the spot</p>
+
+        <section className='mt-4'>
+            <h3 className='text-l text-accent'>Did we observe any deviations in the rotation?</h3>
+            <p>Yes, we noticed that the bot rotated slightly more than 90 degrees, despite our calculations being ideal for a 90 degree rotation</p>
+        </section>
+
+        <section className='mt-4'>
+            <h3 className='text-l text-accent'>If deviations exist, what could be the cause</h3>
+            <p>There are several reasons for the deviation:</p>
+            <ul className='list-disc ml-6'>
+                <li>Wheel slippage: Similar to the straight line task, the wheels can slip during rotation. Normally, this would make the robot undershoot the 90 degree mark, but we must also consider horizontal sliding which can make it rotate not due to the wheel rotation but because of slipping tangential to the direction of rotation</li>
+                <li>The equation for angle rotated depends on the length of the wheelbase of the duckiebot. In our experiment, it was measured manually with a ruler. If the measurement is inaccurate, i.e. greater than the actual length of the wheelbase, then based on equation (2), the wheels would rotate more than required</li>
+                <li>The subscriber to the ticks is reading it at a particular rate. It is possible that in its read cycles, it reads the ticks a few moments after the bot has already rotated 90 degrees. So it realizes this and stops the bot from rotating a little too lates</li>
+            </ul>
+        </section>
+
+        <section className='mt-4'>
+            <h3 className='text-l text-accent'>Does our program shutdown after finishing the above tasks?</h3>
+            <p>Yes, our terminates and shuts down after executing the above tasks. This is further evidenced by the fact that running the <code className="bg-gray-800 px-2 py-1 rounded text-sm">docker ps</code> command and seeing that our launched program does not exist.</p>
+            <p>Potential reasons for why it may not shutdown is that the ros nodes could still be active after our particular task is ended, especially with ros commands like spin() which keep subscriber nodes alive even after it reaches the end of the python script to keep listening to messages and that the ros shutdown() command isn&apos;t called. 
+            In our code, we don&apos;t have a call to <code className="bg-gray-800 px-2 py-1 rounded text-sm">rospy.spin() </code>(unless required for the purposes of a subscriber node), we also have a break statement in our while loop whose condition is to check if <code className="bg-gray-800 px-2 py-1 rounded text-sm">rospy.is_shutdown() </code> is true or not. After exiting the while loop, in our main function, we call <code className="bg-gray-800 px-2 py-1 rounded text-sm">rospy.signal_shutdown() </code> as well, ensuring that the ROS master terminates all nodes. </p>
+        </section>
+
+        <h3 className='mt-6 text-xl'>2.4. Plotting Trajectory</h3>
+        <p className='mt-4'>The velocity (throttle) messages we publish to the <code className="bg-gray-800 px-2 py-1 rounded text-sm">/csc22926/wheels_driver_node/wheels_cmd</code> topic along with the timestamps at which we publish them can be used to determine the change in x and y position of the robot in the world frame of reference </p>
+        <p>The velocity information is recorded into a bag file using the <code className="bg-gray-800 px-2 py-1 rounded text-sm">rosbag record topic -o filename.bag</code> command</p>
+        <p>We then load the bag file contents in a python script and apply the following kinematics equations to get our x and y positions of the robot in the world frame at each timestamp</p>
+        <p> (3) <span className='text-accent'>Δx_robot = (v_left + v_right) / 2 * Δt * SCALING_FACTOR</span></p>
+        <p> (4) <span className='text-accent'>Δy_robot = 0</span></p>
+        <p> (5) <span className='text-accent'>Δθ_robot = (v_right - v_left) / WHEELBASE * Δt * SCALING_FACTOR</span></p><br/>
+        <p> (6) <span className='text-accent'>Δx_world = Δx_robot * cos(θ) - Δy_robot * sin(θ)</span></p>
+        <p> (7) <span className='text-accent'>Δy_world = Δx_robot * sin(θ) + Δy_robot * cos(θ)</span></p>
+        <p> (8) <span className='text-accent'>x_world = x_world + Δx_world</span></p>
+        <p> (9) <span className='text-accent'>y_world = y_world + Δy_world</span></p>
+        <p> (10) <span className='text-accent'>θ = θ + Δθ_robot</span></p><br/>
+        <p>Where <span className='text-accent'>SCALING_FACTOR = 7.5</span> is used to scale the throttle to the actual velocity of the robot and we start with initial values of (x_world, y_world,θ) = (0,0, π/2). </p>
+        <p>Note that the published velocities are not in exact units of m/s like how WHEELBASE and Δt are. These are just very small values [-1,1] that are <b>proportional</b> to the actual velocities of the wheels. Therefore, we made an educated guess on the proportionality constant and multiplied the throttles with this constant (SCALING_FACTOR) to get an accurate measurement of Δθ_robot and Δx_robot</p>
+
+        <p className='mt-4'>We then plot the trajectory of the robot in the world frame using the matplotlib library</p>
+        <div className="relative mt-6 w-full max-w-3xl mx-auto flex justify-center">
+            <Image
+                    src="/straight_line.gif"
+                    alt="Straight Line Trajectory Plot"
+                    width={600}
+                    height={400}
+                    className="rounded-lg shadow-lg"
+                    />
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">Fig 2.3: Trajectory of the straight line task according to <span className='text-accent'>csc22926</span>. (not necessarily the same as actual path travelled)</p>
+        <p className='mt-2 text-sm'>* the axes say that x and y are in m, this is not necessarily correct and was a typo. For them to be meters, the SCALING_FACTOR would have to be exactly the correct value to convert between throttle and velocity in m/s</p>
+        <div className="relative mt-6 w-full max-w-3xl mx-auto flex justify-center">
+            <Image
+                    src="/rotate.gif"
+                    alt="Rotation Trajectory Plot"
+                    width={600}
+                    height={400}
+                    className="rounded-lg shadow-lg"
+                    />
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">Fig 2.3: Trajectory of the 90 degree rotation task according to <span className='text-accent'>csc22926</span> (not necessarily the same as actual path travelled). As expected, the position of the bot does not change</p>
+
+        <h2 className="text-2xl font-semibold mt-6">Part 3. The Will of D</h2>
+        <p className='mt-4'>Our final task for this project was to use the wheel encoders for odometry to make the Duckiebot follow &apos;D&apos;-shaped path. Along the way, we impleted an LED light service to indicate and represent different states of the bots motion</p>
+        
+        <h3 className='mt-6 text-xl'>3.1. Node 1: Moving the Duckiebot in D-shaped path</h3>
+        <div className="relative mt-6 w-full max-w-3xl mx-auto flex justify-center">
+            <Image
+                    src="/D_trajectory.jpg"
+                    alt="D-shaped Trajectory"
+                    width={600}
+                    height={400}
+                    className="rounded-lg shadow-lg"
+                    />
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">Fig 3.1: The path that the Duckiebot must follow starting at the bottom left</p>
+
+        <p className='mt-4'>To make the Duckiebot follow the D-shaped path, we had to calculate the distance and angle the bot must travel to reach each point on the path. We then used the odometry equations to move the bot to each point.</p>
+        <p>The logic for the straight line and 90 degree on the spot rotation parts of this task were already handled in Part 2.</p>
+        <p>We now had to handle the logic for the two curved edges of the path</p>
+        <p>Our calculations are derived from equations (1) and (2) yet again. The angle covered is 90 degrees, but the right and left wheels also cover a finite distance. The right wheel covers a smaller distance than the left wheel due to the radius of its arc length being lesser than the left wheel by the length of the <span className='text-accent'>WHEELBASE</span></p>
+        <p>However, both wheels cover their respective distances in the same time. This means that the ratio of their velocities equals the ratio of their distances covered</p>
+        <p>Δt_left = Δt_right --&gt; d_left / v_left = d_right / v_right --&gt; v_left = (d_left / d_right ) * v_right</p>
+        <p>d_left and d_right are calculated using the formula <span className='text-accent'>d = r * θ</span> where r is the arc radius and θ is π/2 radians</p>
+        <p>We assume a reasonable value for v_right and calculate the corresponding value for v_left. Using these values, we apply the same logic as the rotation task to make the bot move in the path of the curved edge</p>
+
+        <h3 className='mt-6 text-xl'>3.2. Node 2: State Management and LED Service</h3>
+        <p className='mt-4'>We created an LED service that changes the color of the LED lights on the Duckiebot based on its state</p>
+        <p>Node 1 would publish the current state of the robot to a custom topic <code>/led_state</code></p>
+
+        
+        
     </div>
   );
 }

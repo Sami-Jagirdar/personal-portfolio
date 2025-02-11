@@ -176,7 +176,7 @@ export default function Exercise1() {
         We were now able to move the Duckiebot in a near straight line.
       </p>
 
-      <div className= "relative mt-6 w-full max-w-lg mx-auto">
+      <div className= "relative mt-6 w-full max-w-lg mx-auto display: flex justify-center items-center">
         <iframe
           width="800"
           height="450"
@@ -187,8 +187,8 @@ export default function Exercise1() {
           allowFullScreen
           className="rounded-lg shadow-lg"
         ></iframe>
-        <p className="text-center text-sm text-gray-400 mt-2">Video 5.1: Straight line motion</p>
       </div>
+      <p className="text-center text-sm text-gray-400 mt-2">Video 5.1: Straight line motion</p>
 
       <h3 className="text-lg font-medium mt-6">Explanation of Video 5.1</h3>
       <p className="mt-2">
@@ -200,7 +200,7 @@ export default function Exercise1() {
         Again, we ran the keyboard control command and pressed <code>a</code> to start lane following.
       </p>
 
-      <div className="relative mt-6 w-full max-w-lg mx-auto">
+      <div className="relative mt-6 w-full max-w-lg mx-auto display: flex justify-center items-center">
         <iframe
           width="800"
           height="450"
@@ -211,8 +211,8 @@ export default function Exercise1() {
           allowFullScreen
           className="rounded-lg shadow-lg"
         ></iframe>
-        <p className="text-center text-sm text-gray-400 mt-2">Fig 5.2: Duckiebot Lane Following</p>
       </div>
+      <p className="text-center text-sm text-gray-400 mt-2">Fig 5.2: Duckiebot Lane Following</p>
 
       <h3 className="text-lg font-medium mt-6">Explanation of Video 5.2</h3>
       <p className="mt-2">
