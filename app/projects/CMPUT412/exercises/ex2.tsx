@@ -355,3 +355,23 @@ export default function Exercise2() {
     </div>
   );
 }
+
+export function References() {
+  return (
+    <div className="p-6 text-white">
+      <h2 className="text-2xl font-semibold mt-6">Part 5. References and Acknowledgments</h2>
+      <p className='mt-4'>The following resources were used in the completion of this exercise:</p>
+      <ul className='list-disc ml-6'>
+        <li>OpenCV Documentation on Camera Calibration and 3D Reconstruction: <a href="https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html" className="text-blue hover:underline">https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html</a></li>
+        <li>ROS Wiki for understanding ROS image processing and camera calibration: <a href="https://wiki.ros.org/camera_calibration" className="text-blue hover:underline">https://wiki.ros.org/camera_calibration</a></li>
+        <li>Duckietown Documentation for camera parameters and computer vision: <a href="https://docs.duckietown.org/daffy/opmanual_duckiebot/out/camera_calibration.html" className="text-blue hover:underline">https://docs.duckietown.org/daffy/opmanual_duckiebot/out/camera_calibration.html</a></li>
+      </ul>
+
+      <p className="mt-4">
+        We would like to acknowledge the LI <span className="text-accent">Adam Parker</span> and the TAs 
+        <span className="text-accent"> Dikshant, Jasper</span> and <span className="text-accent">Monta </span> 
+        for their assistance with explaining computer vision concepts and helping us troubleshoot our camera calibration and image processing challenges.
+      </p>
+    </div>
+  );
+}

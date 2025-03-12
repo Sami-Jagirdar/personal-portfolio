@@ -14,5 +14,12 @@ export const exercises = [
     image: "/CMPUT412_ex2.jpg",
     techStack: ["ROS", "Python", "OpenCV"],
   },
+  {
+    id: "ex3",
+    title: "Exercise 3",
+    description: "Computer Vision & Controllers",
+    image: "/CMPUT412_ex3.png",
+    techStack: ["ROS", "Python", "OpenCV"],
+  },
   // Add more exercises as needed
 ]

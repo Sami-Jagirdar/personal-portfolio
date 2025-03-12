@@ -1,0 +1,480 @@
+"use client";
+import Image from 'next/image';
+
+export default function Exercise3() {
+  return (
+    <div className="p-6 text-white">
+      <h1 className="text-3xl font-bold">Exercise 3 - Computer Vision & Robotics</h1>
+      <h3 className="text-xl text-silver mt-4">Sami Jagirdar [ccid: jagirdar]   <span className='text-accent'>|</span>    Basia Ofovwe [ccid: ofovwe]</h3>
+      <p className="mt-4">Technologies used: <span className='text-accent'>Python, ROS, OpenCV, Duckietown</span> </p>
+
+      <h2 className="text-2xl font-semibold mt-6">Part 1. Computer Vision</h2>
+      <h3 className='mt-4 text-xl'>1.1. Camera Distortion</h3>
+
+      <section className='mt-4'>
+        <h3 className='text-l font-semibold text-accent'>Converting Distorted Images to Undistorted Images</h3>
+        <p>Camera lenses introduce distortion to images, particularly at the edges, causing straight lines to appear curved. Undistorting images requires the camera&apos;s intrinsic parameters and distortion coefficients.</p>
+        
+        <p className="mt-2">The general process for undistorting images involves:</p>
+        <ol className="list-decimal ml-6 mt-2 space-y-1">
+          <li>Obtaining the camera&apos;s intrinsic matrix and distortion coefficients</li>
+          <li>Computing an optimal new camera matrix to minimize information loss</li>
+          <li>Creating undistortion mapping matrices</li>
+          <li>Applying these maps to remap pixels from the distorted to undistorted image</li>
+        </ol>
+        
+        <p className="mt-2">In our implementation, we used OpenCV with ROS on a Duckiebot with these key steps:</p>
+        <ol className="list-decimal ml-6 mt-2 space-y-1">
+          <li>Retrieved camera parameters from the ROS <code className="bg-gray-800 px-2 py-1 rounded text-sm">camera_info</code> topic</li>
+          <li>Used <code className="bg-gray-800 px-2 py-1 rounded text-sm">cv2.getOptimalNewCameraMatrix()</code> to calculate an optimal camera matrix</li>
+          <li>Created mapping matrices once with <code className="bg-gray-800 px-2 py-1 rounded text-sm">cv2.initUndistortRectifyMap()</code></li>
+          <li>Applied the undistortion to each new image using <code className="bg-gray-800 px-2 py-1 rounded text-sm">cv2.remap()</code></li>
+          <li>Cropped the result using the region of interest (ROI) to remove black borders</li>
+        </ol>
+        
+        <p className="mt-3">This method is more efficient than using <code className="bg-gray-800 px-2 py-1 rounded text-sm">cv2.undistort()</code> for each frame, as the computational heavy lifting is done only once during initialization.</p>
+        
+        <div className="flex flex-col md:flex-row gap-4 justify-center mt-6">
+          <div className="flex-1">
+            <Image
+              src="/distorted.png"
+              alt="Distorted Camera Image"
+              width={400}
+              height={300}
+              className="rounded-lg shadow-lg"
+            />
+            <p className="text-center text-sm text-gray-400 mt-2">Fig 1.1a Distorted Camera Image</p>
+          </div>
+          <div className="flex-1">
+            <Image
+              src="/undistorted.png"
+              alt="Undistorted Camera Image"
+              width={400}
+              height={300}
+              className="rounded-lg shadow-lg"
+            />
+            <p className="text-center text-sm text-gray-400 mt-2">Fig 1.1b Undistorted Camera Image</p>
+          </div>
+        </div>
+      </section>
+
+      <h3 className='mt-6 text-xl'>1.2. Image Pre-processing</h3>
+      <section className='mt-4'>
+        <h3 className='text-l font-semibold text-accent'>Image Preparation for Processing</h3>
+        <p>Before applying our main computer vision algorithms, we performed several pre-processing steps to optimize the images:</p>
+        
+        <ul className="list-disc ml-6 mt-2 space-y-1">
+          <li>Resized the image from its original 640x480 resolution to half its size (320x240) to improve processing speed</li>
+          <li>Cropped the top half of the image to focus only on the relevant road area</li>
+          <li>Applied a Gaussian blur using OpenCV&apos;s <code className="bg-gray-800 px-2 py-1 rounded text-sm">cv2.GaussianBlur()</code> function to reduce noise and detail</li>
+        </ul>
+        
+        <p className="mt-3">These pre-processing steps significantly improved the performance of our subsequent computer vision operations by reducing computational load and focusing only on the relevant portions of the image. We are able to run our nodes at a frequency of 20 frames/second. </p>
+      </section>
+
+      <h3 className='mt-6 text-xl'>1.3. Color Detection</h3>
+      <section className='mt-4'>
+        <h3 className='text-l font-semibold text-accent'>Line and Color Detection</h3>
+        <p>We implemented a robust color detection system to identify colored lane lines on the road. The process involved several key steps:</p>
+        
+        <h4 className="mt-4 font-medium text-accent">How to detect lines and colors?</h4>
+        <ol className="list-decimal ml-6 mt-2 space-y-1">
+          <li>First, we captured sample images of red, green, and blue lane lines using the Duckiebot&apos;s camera</li>
+          <li>We created a custom HSV calibration tool with sliders to precisely determine optimal HSV ranges for each color</li>
+          <div className="flex flex-col md:flex-row gap-4 justify-center mt-6">
+            <div className="flex-1">
+              <Image
+                src="/red_mask.png"
+                alt="Red Color Mask"
+                width={300}
+                height={200}
+                className="rounded-lg shadow-lg"
+              />
+              <p className="text-center text-sm text-gray-400 mt-2">Fig 1.3a Red Color Mask</p>
+            </div>
+            <div className="flex-1">
+              <Image
+                src="/green_mask.png"
+                alt="Green Color Mask"
+                width={300}
+                height={200}
+                className="rounded-lg shadow-lg"
+              />
+              <p className="text-center text-sm text-gray-400 mt-2">Fig 1.3b Green Color Mask</p>
+            </div>
+            <div className="flex-1">
+              <Image
+                src="/blue_mask.png"
+                alt="Blue Color Mask"
+                width={300}
+                height={200}
+                className="rounded-lg shadow-lg"
+              />
+              <p className="text-center text-sm text-gray-400 mt-2">Fig 1.3c Blue Color Mask</p>
+            </div>
+          </div>
+          <li>Converted camera frames from BGR to HSV color space using <code className="bg-gray-800 px-2 py-1 rounded text-sm">cv2.cvtColor()</code></li>
+          <li>Applied color masking with <code className="bg-gray-800 px-2 py-1 rounded text-sm">cv2.inRange()</code> using our calibrated HSV thresholds</li>
+          <li>Enhanced detection reliability by applying dilation to fill gaps in the masks</li>
+          <li>Found and filtered contours using <code className="bg-gray-800 px-2 py-1 rounded text-sm">cv2.findContours()</code> and area thresholding</li>
+        </ol>
+
+        <h4 className="mt-4 font-medium text-accent">How contour detection works</h4>
+        <p>Contour detection is a crucial step that identifies the boundaries of objects in binary images:</p>
+        <ul className="list-disc ml-6 mt-2 space-y-1">
+          <li>After creating a binary mask with our HSV color filtering, contour detection identifies connected regions in this mask</li>
+          <li>The <code className="bg-gray-800 px-2 py-1 rounded text-sm">cv2.findContours()</code> function traces the boundaries of white areas in the binary mask</li>
+          <li>Each contour is represented as a sequence of points defining the object&apos;s outline</li>
+          <li>We used <code className="bg-gray-800 px-2 py-1 rounded text-sm">cv2.RETR_TREE</code> to retrieve all contours in a hierarchical structure</li>
+          <li>The <code className="bg-gray-800 px-2 py-1 rounded text-sm">cv2.CHAIN_APPROX_SIMPLE</code> parameter reduces memory usage by storing only endpoint coordinates</li>
+          <li>We then filtered contours by area (&gt;300 pixels) to eliminate noise and focus on substantial lane markings</li>
+        </ul>
+        
+        <h4 className="mt-4 font-medium text-accent">How to get lane dimensions?</h4>
+        <ul className="list-disc ml-6 mt-2 space-y-1">
+          <li>Used <code className="bg-gray-800 px-2 py-1 rounded text-sm">cv2.boundingRect()</code> to extract bounding box coordinates (x, y, width, height) around detected contours</li>
+          <li>Stored these dimensions in a structured data format for each detected color lane</li>
+          <li>Visualized dimensions by drawing rectangles around detected lanes and annotating with size information</li>
+        </ul>
+        
+        <h4 className="mt-4 font-medium text-accent">How to develop a robust line and color detection algorithm?</h4>
+        <p>Our robust color detection approach incorporated several key principles:</p>
+        <ul className="list-disc ml-6 mt-2 space-y-1">
+          <li><strong>Precise calibration:</strong> Using our custom HSV calibration tool to fine-tune color ranges for our specific lighting conditions</li>
+          <li><strong>Noise reduction:</strong> Applying appropriate pre-processing and filtering incorrect detections by area threshold along with dilation</li>
+          <li><strong>Anticipating the environment in which colors are detected:</strong>Since our Duckiebot is on the ground, cropping the top half to not detect any colors above the road was an important strategy</li>
+          <li><strong>Choosing the right contour:</strong> Sometimes, multiple contours can be detected in close proximity, we choose the largest contour</li>
+        </ul>
+        
+        <p className="mt-3">This approach enabled reliable detection of colored lane lines, providing critical input for the upcoming navigation system.</p>
+
+        <div className="flex flex-col md:flex-row gap-4 justify-center mt-6">
+          <div className="flex-1">
+            <Image
+              src="/red_detection.png"
+              alt="Red Lane Detection"
+              width={300}
+              height={200}
+              className="rounded-lg shadow-lg"
+            />
+            <p className="text-center text-sm text-gray-400 mt-2">Fig 1.3d Red Lane Detection with bounding boxes and dimensions</p>
+          </div>
+          <div className="flex-1">
+            <Image
+              src="/green_detection.png"
+              alt="Green Lane Detection"
+              width={300}
+              height={200}
+              className="rounded-lg shadow-lg"
+            />
+            <p className="text-center text-sm text-gray-400 mt-2">Fig 1.3e Green Lane Detection with bounding boxes and dimensions</p>
+          </div>
+          <div className="flex-1">
+            <Image
+              src="/blue_detection.png"
+              alt="Blue Lane Detection"
+              width={300}
+              height={200}
+              className="rounded-lg shadow-lg"
+            />
+            <p className="text-center text-sm text-gray-400 mt-2">Fig 1.3f Blue Lane Detection with bounding boxes and dimensions</p>
+          </div>
+        </div>
+      </section>
+
+      <h3 className='mt-6 text-xl'>1.4. LED Control & Autonomous Navigation</h3>
+      <section className='mt-4'>
+        <h3 className='text-l font-semibold text-accent'>Integration of Vision and Control</h3>
+        <p>We implemented a unified approach to autonomous navigation and LED control based on the visual lane detection:</p>
+        
+        <ul className="list-disc ml-6 mt-2 space-y-1">
+          <li>Created a dedicated navigation node to handle both movement commands and LED signaling</li>
+          <li>Used the detection results from our color detection system to inform navigation decisions</li>
+          <li>Implemented LED control to provide visual feedback about the currently detected lane</li>
+          <li>Published Twist2D movement commands directly to the <code className="bg-gray-800 px-2 py-1 rounded text-sm">car_cmd_switch_node/cmd</code> topic</li>
+          <li>Controlled the robot by setting linear velocity (v) and angular velocity (omega) parameters</li>
+          <li>This approach differed from Exercise 2 by directly manipulating chassis movement rather than using wheel ticks</li>
+        </ul>
+      </section>
+
+      <h3 className='mt-6 text-xl'>1.5. Lane-Based Behavioral Execution</h3>
+      <section className='mt-4'>
+        <h3 className='text-l font-semibold text-accent'>Color-Specific Behaviors & Distance Estimation</h3>
+        <p>We successfully implemented the required behaviors for each colored lane (blue: stopping, signaling right, and turning 90° right; red: stopping and driving straight; green: stopping, signaling left, and turning 90° left).</p>
+        
+        <p className="mt-3">A key innovation in our implementation was using the Duckiebot&apos;s extrinsic calibration parameters to accurately determine the distance to each lane:</p>
+        
+        <ul className="list-disc ml-6 mt-2 space-y-1">
+          <li>Used the homography matrix from the bot&apos;s calibration to project pixel coordinates to ground coordinates</li>
+          <li>Specifically, mapped the bottom center point of each lane&apos;s bounding box to its real-world ground distance</li>
+          <li>This approach enabled precise distance-based behaviors, allowing the bot to reliably stop at the required 30cm distance from each lane</li>
+          <li>Computed the ground projection using the following transformation:</li>
+        </ul>
+        
+        <pre className="bg-gray-800 p-2 mt-2 rounded overflow-x-auto text-sm mx-6">
+          <code>
+          ground_point = H @ image_point  # Where H is the homography matrix <br/>
+          # X,Y coordinates in ground frame <br/>
+          ground_x, ground_y = ground_point[0], ground_point[1] 
+          </code>
+        </pre>
+
+        <h4 className="mt-4 font-medium text-accent">ROS Service Implementation</h4>
+        <p>To enable modular and on-demand execution of color-specific behaviors, we implemented a ROS service architecture:</p>
+        
+        <ul className="list-disc ml-6 mt-2 space-y-1">
+          <li>Created a custom service in the lane detection node with the navigation node as the client</li>
+          <li>This allowed us to trigger different color behaviors separately and on demand</li>
+          <li>The service provided a comprehensive understanding of ROS service/client patterns</li>
+        </ul>
+        
+        <div className="flex justify-center mt-3">
+          <pre className="bg-gray-800 p-2 rounded text-xs w-64">
+            <code>
+# LaneInfo.srv <br/>
+# Request <br/>
+int8 RED=1 <br/>
+int8 GREEN=2<br/>
+int8 BLUE=3<br/>
+int8 color<br/>
+---<br/>
+# Response<br/>
+bool detected<br/>
+int32 x<br/>
+int32 y<br/>
+int32 width<br/>
+int32 height<br/>
+int32 area<br/>
+float32 distance<br/>
+            </code>
+          </pre>
+        </div>
+        
+        <p className="mt-3">By combining accurate distance estimation with our color detection system, the Duckiebot could reliably execute the appropriate behavior for each lane color while maintaining precise positioning relative to the lanes.</p>
+
+        <div className="relative mt-6 w-full max-w-lg mx-auto display: flex justify-center items-center">
+          <iframe
+            width="800"
+            height="450"
+            src="https://youtube.com/embed/PLACEHOLDER1"
+            title="Red Line Behavior"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="rounded-lg shadow-lg"
+          ></iframe>
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">Fig 1.5a: Duckiebot approaches the red line from 30cm distance, stops for 3-5 seconds, then proceeds straight ahead for at least 30cm</p>
+        
+        <div className="relative mt-6 w-full max-w-lg mx-auto display: flex justify-center items-center">
+          <iframe
+            width="800"
+            height="450"
+            src="https://youtube.com/embed/PLACEHOLDER2"
+            title="Green Line Behavior"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="rounded-lg shadow-lg"
+          ></iframe>
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">Fig 1.5b: Duckiebot approaches the green line from 30cm distance, stops for 3-5 seconds, signals using left LEDs, then turns 90 degrees to the left</p>
+        
+        <div className="relative mt-6 w-full max-w-lg mx-auto display: flex justify-center items-center">
+          <iframe
+            width="800"
+            height="450"
+            src="https://youtube.com/embed/PLACEHOLDER3"
+            title="Blue Line Behavior"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="rounded-lg shadow-lg"
+          ></iframe>
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">Fig 1.5c: Duckiebot approaches the blue line from 30cm distance, stops for 3-5 seconds, signals using right LEDs, then turns 90 degrees to the right</p>
+
+        <h4 className="mt-4 font-medium text-accent">Integration and Optimization Considerations</h4>
+        <p>Throughout the development of this project, we identified several key insights regarding system integration:</p>
+        
+        <h5 className="mt-3 ml-3 font-medium text-accent">How to integrate computer vision, LED control, and wheel movement nodes?</h5>
+        <ul className="list-disc ml-8 mt-1 space-y-1">
+          <li>Using ROS services or topics to establish clear communication between detection and control nodes</li>
+          <li>Ensuring consistent coordinate frames between vision data and control commands</li>
+          <li>Centralizing behavior logic in the navigation node with color detection as a service</li>
+          <li>Alternatively, we could make the color detection node a publisher that publishes lane results like distance and dimensions to a topic to which navigation node subscribes to</li>
+        </ul>
+        
+        <h5 className="mt-3 ml-3 font-medium text-accent">How to improve this integration?</h5>
+        <ul className="list-disc ml-8 mt-1 space-y-1">
+          <li>Adding basic error recovery for lost lane detection</li>
+          <li>Creating launch files for easier startup of the entire system</li>
+          <li>Implementing simple parameter files to adjust detection thresholds without code changes</li>
+        </ul>
+        
+        <h5 className="mt-3 ml-3 font-medium text-accent">How to optimize integration and handle delays?</h5>
+        <ul className="list-disc ml-8 mt-1 space-y-1">
+          <li>Reducing image resolution for faster processing</li>
+          <li>Processing only regions of interest rather than the entire image</li>
+          <li>Adding simple smoothing filters to control commands to reduce jitter</li>
+        </ul>
+        
+        <h5 className="mt-3 ml-3 font-medium text-accent">How does camera frequency and control update rate impact performance?</h5>
+        <ul className="list-disc ml-8 mt-1 space-y-1">
+          <li>In our implementation, both rates were set to 20Hz which worked well for our application</li>
+          <li>Matching rates helped maintain system stability during transitions between behaviors</li>
+          <li>This frequency provided sufficient responsiveness while staying within processing capabilities</li>
+        </ul>
+      </section>      
+
+      <h2 className="text-2xl font-semibold mt-6">Part 2. Controllers</h2>
+      <section className='mt-4'>
+        <h3 className='text-l font-semibold text-accent'>Lane Following with Control Systems</h3>
+        <p>This section explores different control strategies for enabling autonomous lane following in the Duckiebot.</p>
+        
+        <h4 className="mt-4 text-l font-medium text-accent">Lane Detection Implementation</h4>
+        <p>Building on our approach from Part 1, we implemented lane detection for yellow dotted center lines and white solid outer lines:</p>
+        <ul className="list-disc ml-6 mt-2 space-y-1">
+          <li>Applied similar HSV color filtering techniques to isolate yellow and white lanes</li>
+          <li>Used ground projection via homography to convert detected lane positions to real-world distances</li>
+          <li>Published detection results to a custom ROS topic using our own message format</li>
+          <li>Enabled the lane controller node to subscribe to these lane positions for feedback control</li>
+        </ul>
+        
+        <h4 className="mt-4 text-l font-medium text-accent">Control System Implementation</h4>
+        <p>Our error calculation approach focused on maintaining the Duckiebot in the center of the lane:</p>
+        <ul className="list-disc ml-6 mt-2 space-y-1">
+          <li>When both lanes were detected, error was calculated as the addition of distances (yellow lane +y, white lane -y)</li>
+          <li>For balanced positioning, the net error should be zero (equidistant from both lanes)</li>
+          <li>When only one lane was detected, we adjusted the error to maintain approximately 10cm from that lane</li>
+          <li>This error value directly influenced the angular velocity (omega) for steering control</li>
+          <li>After tuning, we settled on gains of: <code className="bg-gray-800 px-2 py-1 rounded text-sm">Kp = 30, Kd = 0.5, Ki = 0.1</code></li>
+        </ul>
+        
+        <h4 className="mt-4 text-l font-medium text-accent">Comparison of Controller Types</h4>
+        <p className="font-medium">What are the pros and cons of P, PD, and PID controllers?</p>
+        
+        <div className="overflow-x-auto mt-2">
+          <table className="min-w-full bg-gray-800 rounded-lg">
+            <thead>
+              <tr>
+                <th className="px-4 py-2 border-b border-gray-600 text-left">Controller</th>
+                <th className="px-4 py-2 border-b border-gray-600 text-left">Pros</th>
+                <th className="px-4 py-2 border-b border-gray-600 text-left">Cons</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="px-4 py-2 border-b border-gray-600 font-medium">P (Proportional)</td>
+                <td className="px-4 py-2 border-b border-gray-600">
+                  <ul className="list-disc ml-4">
+                    <li>Simple to implement</li>
+                    <li>Intuitive parameter tuning</li>
+                    <li>Fast initial response</li>
+                  </ul>
+                </td>
+                <td className="px-4 py-2 border-b border-gray-600">
+                  <ul className="list-disc ml-4">
+                    <li>Steady-state error</li>
+                    <li>Oscillations at high gains</li>
+                    <li>Cannot anticipate future errors</li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2 border-b border-gray-600 font-medium">PD (Proportional-Derivative)</td>
+                <td className="px-4 py-2 border-b border-gray-600">
+                  <ul className="list-disc ml-4">
+                    <li>Reduces oscillations</li>
+                    <li>Faster settling time</li>
+                    <li>Anticipates error changes</li>
+                  </ul>
+                </td>
+                <td className="px-4 py-2 border-b border-gray-600">
+                  <ul className="list-disc ml-4">
+                    <li>Still has steady-state error</li>
+                    <li>Sensitive to noise</li>
+                    <li>More complex tuning</li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2 border-b border-gray-600 font-medium">PID (Proportional-Integral-Derivative)</td>
+                <td className="px-4 py-2 border-b border-gray-600">
+                  <ul className="list-disc ml-4">
+                    <li>Eliminates steady-state error</li>
+                    <li>Robust to disturbances</li>
+                    <li>Complete control solution</li>
+                  </ul>
+                </td>
+                <td className="px-4 py-2 border-b border-gray-600">
+                  <ul className="list-disc ml-4">
+                    <li>Most complex to tune</li>
+                    <li>Risk of integral windup</li>
+                    <li>Potential overshoot</li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <p className="mt-4 font-medium">What is the error calculation method for your controller?</p>
+        <p className="mt-2">Our error calculation used the ground-projected distances to the lanes:</p>
+        <pre className="bg-gray-800 p-2 rounded text-sm mt-2 mx-6">
+          <code>
+# When both lanes detected:
+error = yellow_lane_distance + white_lane_distance
+# When only yellow lane detected:
+error = yellow_lane_distance - desired_distance (10cm)
+# When only white lane detected:
+error = desired_distance (10cm) + white_lane_distance
+          </code>
+        </pre>
+        <p className="mt-2">This approach provided a signed error value that represented the robot&apos;s deviation from the lane center, where zero indicated perfect centering between lanes.</p>
+        
+        <p className="mt-4 font-medium">How does the derivative (&quot;D&quot;) term in the &quot;PD&quot; controller impact control logic? Is it beneficial?</p>
+        <p className="mt-2">The derivative term (Kd = 0.5) significantly improved our lane following performance by:</p>
+        <ul className="list-disc ml-6 mt-1 space-y-1">
+          <li>Dampening oscillations that occurred with the P controller alone</li>
+          <li>Acting as a &quot;predictive&quot; element by responding to the rate of error change</li>
+          <li>Providing a counteracting force when the robot was turning too quickly</li>
+          <li>Enabling higher proportional gains without introducing instability</li>
+        </ul>
+        <p className="mt-2">We found the D term particularly beneficial when the Duckiebot needed to make corrections after detecting a lane shift, reducing overshoot and settling time.</p>
+        
+        <p className="mt-4 font-medium">How does the integral (&quot;I&quot;) term in the &quot;PID&quot; controller affect performance? Was it useful for your robot?</p>
+        <p className="mt-2">The integral term (Ki = 0.1) had the following effects:</p>
+        <ul className="list-disc ml-6 mt-1 space-y-1">
+          <li>Eliminated small persistent errors that occurred with just PD control</li>
+          <li>Compensated for systematic biases in our system (e.g., slight wheel alignment issues)</li>
+          <li>Improved straight-line performance over longer distances</li>
+        </ul>
+        <p className="mt-2">While useful, we kept the integral gain small to avoid excessive overshoot and minimize integral windup issues. The integral component was most valuable during longer straight segments where minor persistent errors would accumulate over time.</p>
+        
+        <p className="mt-4 font-medium">What methods can be used to tune the controller&apos;s parameters effectively?</p>
+        <p className="mt-2">We used a combination of approaches to tune our PID parameters:</p>
+        <ol className="list-decimal ml-6 mt-1 space-y-1">
+          <li>Started with manual tuning: implemented P control first, then added D, and finally I</li>
+          <li>Applied the Ziegler-Nichols method: identified the ultimate gain where oscillations began, then calculated initial parameters</li>
+          <li>Used iterative testing: made small adjustments based on observed performance</li>
+          <li>Evaluated specific metrics: settling time, overshoot, and steady-state error</li>
+        </ol>
+        <p className="mt-2">The final parameters (Kp = 30, Kd = 0.5, Ki = 0.1) provided a good balance between responsive steering and stable lane following across the 1.5-meter test distance.</p>
+      </section>
+      
+      {/* References section directly in the Exercise3 component */}
+      <h2 className="text-2xl font-semibold mt-6">References and Acknowledgments</h2>
+      <p className='mt-4'>The following resources were used in the completion of this exercise:</p>
+      <ul className='list-disc ml-6'>
+        <li>OpenCV Documentation on Camera Calibration and Undistortion: <a href="https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html" className="text-blue hover:underline">https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html</a></li>
+      </ul>
+
+      <p className="mt-4">
+        We would like to acknowledge the LI <span className="text-accent">Adam Parker</span> and the TAs 
+        <span className="text-accent"> Dikshant, Jasper</span> and <span className="text-accent">Monta </span> 
+        for their assistance with explaining computer vision concepts and helping us troubleshoot our camera calibration and image processing challenges.
+      </p>
+    </div>
+  );
+}
