@@ -305,12 +305,12 @@ float32 distance<br/>
           <li>Alternatively, we could make the color detection node a publisher that publishes lane results like distance and dimensions to a topic to which navigation node subscribes to</li>
         </ul>
         
-        <h5 className="mt-3 ml-3 font-medium text-accent">How to improve this integration?</h5>
+        {/* <h5 className="mt-3 ml-3 font-medium text-accent">How to improve this integration?</h5>
         <ul className="list-disc ml-8 mt-1 space-y-1">
           <li>Adding basic error recovery for lost lane detection</li>
           <li>Creating launch files for easier startup of the entire system</li>
           <li>Implementing simple parameter files to adjust detection thresholds without code changes</li>
-        </ul>
+        </ul> */}
         
         <h5 className="mt-3 ml-3 font-medium text-accent">How to optimize integration and handle delays?</h5>
         <ul className="list-disc ml-8 mt-1 space-y-1">
@@ -340,6 +340,48 @@ float32 distance<br/>
           <li>Published detection results to a custom ROS topic using our own message format</li>
           <li>Enabled the lane controller node to subscribe to these lane positions for feedback control</li>
         </ul>
+
+        <div className="relative mt-6 w-full max-w-lg mx-auto display: flex justify-center items-center">
+          <iframe
+            width="800"
+            height="450"
+            src="https://youtube.com/embed/PLACEHOLDER_P"
+            title="P Controller Lane Following"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="rounded-lg shadow-lg"
+          ></iframe>
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">Fig 2.1: Duckiebot following lane for 1.5m using P controller</p>
+        
+        <div className="relative mt-6 w-full max-w-lg mx-auto display: flex justify-center items-center">
+          <iframe
+            width="800"
+            height="450"
+            src="https://youtube.com/embed/PLACEHOLDER_PD"
+            title="PD Controller Lane Following"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="rounded-lg shadow-lg"
+          ></iframe>
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">Fig 2.2: Duckiebot following lane for 1.5m using PD controller with reduced oscillation</p>
+        
+        <div className="relative mt-6 w-full max-w-lg mx-auto display: flex justify-center items-center">
+          <iframe
+            width="800"
+            height="450"
+            src="https://youtube.com/embed/PLACEHOLDER_PID"
+            title="PID Controller Lane Following"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="rounded-lg shadow-lg"
+          ></iframe>
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">Fig 2.3: Duckiebot following lane for 1.5m using PID controller with improved stability</p>
         
         <h4 className="mt-4 text-l font-medium text-accent">Control System Implementation</h4>
         <p>Our error calculation approach focused on maintaining the Duckiebot in the center of the lane:</p>
@@ -348,7 +390,7 @@ float32 distance<br/>
           <li>For balanced positioning, the net error should be zero (equidistant from both lanes)</li>
           <li>When only one lane was detected, we adjusted the error to maintain approximately 10cm from that lane</li>
           <li>This error value directly influenced the angular velocity (omega) for steering control</li>
-          <li>After tuning, we settled on gains of: <code className="bg-gray-800 px-2 py-1 rounded text-sm">Kp = 30, Kd = 0.5, Ki = 0.1</code></li>
+          <li>After tuning, we settled on gains of: <code className="bg-gray-800 px-2 py-1 rounded text-sm">Kp = 30, Kd = 0.7, Ki = 0.03</code></li>
         </ul>
         
         <h4 className="mt-4 text-l font-medium text-accent">Comparison of Controller Types</h4>
@@ -419,61 +461,92 @@ float32 distance<br/>
           </table>
         </div>
         
-        <p className="mt-4 font-medium">What is the error calculation method for your controller?</p>
+        <p className="mt-4 font-medium text-accent">What is the error calculation method for your controller?</p>
         <p className="mt-2">Our error calculation used the ground-projected distances to the lanes:</p>
         <pre className="bg-gray-800 p-2 rounded text-sm mt-2 mx-6">
           <code>
-# When both lanes detected:
-error = yellow_lane_distance + white_lane_distance
-# When only yellow lane detected:
-error = yellow_lane_distance - desired_distance (10cm)
-# When only white lane detected:
-error = desired_distance (10cm) + white_lane_distance
+# When both lanes detected: <br/>
+error = yellow_lane_distance + white_lane_distance<br/>
+# When only yellow lane detected:<br/>
+error = yellow_lane_distance - desired_distance (10cm)<br/>
+# When only white lane detected:<br/>
+error = desired_distance (10cm) + white_lane_distance<br/>
           </code>
         </pre>
         <p className="mt-2">This approach provided a signed error value that represented the robot&apos;s deviation from the lane center, where zero indicated perfect centering between lanes.</p>
         
-        <p className="mt-4 font-medium">How does the derivative (&quot;D&quot;) term in the &quot;PD&quot; controller impact control logic? Is it beneficial?</p>
-        <p className="mt-2">The derivative term (Kd = 0.5) significantly improved our lane following performance by:</p>
+        <p className="mt-4 font-medium text-accent">How does the derivative (&quot;D&quot;) term in the PD controller impact control logic? Is it beneficial?</p>
+        <p className="mt-2">In theory, the derivative term helps dampen oscillations and provides faster response to changing errors. In our implementation:</p>
         <ul className="list-disc ml-6 mt-1 space-y-1">
-          <li>Dampening oscillations that occurred with the P controller alone</li>
-          <li>Acting as a &quot;predictive&quot; element by responding to the rate of error change</li>
-          <li>Providing a counteracting force when the robot was turning too quickly</li>
-          <li>Enabling higher proportional gains without introducing instability</li>
+          <li>We expected the D term (Kd = 0.7) to significantly reduce oscillations</li>
+          <li>While we did observe some dampening effect, the difference wasn&apos;t as dramatic as anticipated</li>
+          <li>The benefits would likely be more noticeable over longer distances</li>
+          <li>For our short 1.5m test track, the improvements were definitely present though</li>
         </ul>
-        <p className="mt-2">We found the D term particularly beneficial when the Duckiebot needed to make corrections after detecting a lane shift, reducing overshoot and settling time.</p>
         
-        <p className="mt-4 font-medium">How does the integral (&quot;I&quot;) term in the &quot;PID&quot; controller affect performance? Was it useful for your robot?</p>
-        <p className="mt-2">The integral term (Ki = 0.1) had the following effects:</p>
+        <p className="mt-4 font-medium text-accent">How does the integral (&quot;I&quot;) term in the PID controller affect performance? Was it useful for your robot?</p>
+        <p className="mt-2">The integral term had mixed effects on our system:</p>
         <ul className="list-disc ml-6 mt-1 space-y-1">
-          <li>Eliminated small persistent errors that occurred with just PD control</li>
-          <li>Compensated for systematic biases in our system (e.g., slight wheel alignment issues)</li>
-          <li>Improved straight-line performance over longer distances</li>
+          <li>We kept the integral gain very small (Ki = 0.03) after testing</li>
+          <li>Higher values consistently caused noticeable overshooting</li>
+          <li>The small value helped address minor systematic biases</li>
+          <li>Overall, this term had the smallest impact on our controller&apos;s performance</li>
         </ul>
-        <p className="mt-2">While useful, we kept the integral gain small to avoid excessive overshoot and minimize integral windup issues. The integral component was most valuable during longer straight segments where minor persistent errors would accumulate over time.</p>
         
-        <p className="mt-4 font-medium">What methods can be used to tune the controller&apos;s parameters effectively?</p>
+        <p className="mt-4 font-medium text-accent">What methods can be used to tune the controller&apos;s parameters effectively?</p>
         <p className="mt-2">We used a combination of approaches to tune our PID parameters:</p>
         <ol className="list-decimal ml-6 mt-1 space-y-1">
-          <li>Started with manual tuning: implemented P control first, then added D, and finally I</li>
-          <li>Applied the Ziegler-Nichols method: identified the ultimate gain where oscillations began, then calculated initial parameters</li>
+          <li>Started with manual tuning: implemented P control first (took the most time), then added D, and finally I</li>
           <li>Used iterative testing: made small adjustments based on observed performance</li>
-          <li>Evaluated specific metrics: settling time, overshoot, and steady-state error</li>
+          <li>We later realized we could have applied the Ziegler-Nichols method: identified the ultimate gain where oscillations began, then calculated initial parameters. We will keep it in mind for next time</li>
+          <li>It was taking a long time for us to set rebuild the bot for each gain value. We managed to find an alternative starting dts-gui-tools which provided a docker container where we copied our catkin package to. We ran catkin build on it and were able to run the package simply using the rosrun command while passing the gain values as command line arguments. (see alt_lane_following_controller.py in our repo) </li>
         </ol>
-        <p className="mt-2">The final parameters (Kp = 30, Kd = 0.5, Ki = 0.1) provided a good balance between responsive steering and stable lane following across the 1.5-meter test distance.</p>
+        <p className="mt-2">The final parameters (Kp = 30, Kd = 0.7, Ki = 0.03) provided a good balance between responsive steering and stable lane following across the 1.5-meter test distance.</p>
+      </section>
+
+      <h2 className="text-2xl font-semibold mt-6">Part 3. Lane Following</h2>
+      <section className='mt-4'>
+        <h3 className='text-l font-semibold text-accent'>Autonomous Oval Track Navigation</h3>
+        <p>For the final part of the exercise, we applied our lane detection and control system to navigate an oval track:</p>
+        
+        <ul className="list-disc ml-6 mt-2 space-y-1">
+          <li>We utilized the PD controller developed in Part 2 as our primary control method</li>
+          {/* <li>The controller maintained consistent lane positioning around both straight sections and curves</li>
+          <li>Our ground-distance based approach provided reliable error calculation throughout the track</li>
+          <li>The system successfully handled transitions between straight sections and curved sections</li> */}
+        </ul>
+        
+        {/* <p className="mt-2">The PD controller proved to be the most effective balance between performance and complexity for this application, maintaining stable control without the additional complexity of the integral term.</p> */}
+        
+        <div className="relative mt-6 w-full max-w-lg mx-auto display: flex justify-center items-center">
+          <iframe
+            width="800"
+            height="450"
+            src="https://youtube.com/embed/PLACEHOLDER_OVAL"
+            title="Oval Track Following"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="rounded-lg shadow-lg"
+          ></iframe>
+        </div>
+        <p className="text-center text-sm text-gray-400 mt-2">Fig 3.1: Duckiebot autonomously following an oval track using the PD controller</p>
       </section>
       
       {/* References section directly in the Exercise3 component */}
       <h2 className="text-2xl font-semibold mt-6">References and Acknowledgments</h2>
       <p className='mt-4'>The following resources were used in the completion of this exercise:</p>
       <ul className='list-disc ml-6'>
-        <li>OpenCV Documentation on Camera Calibration and Undistortion: <a href="https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html" className="text-blue hover:underline">https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html</a></li>
+        <li><a href="https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html" className="text-blue hover:underline">OpenCV Documentation on Camera Calibration and Undistortion: </a></li>
+        <li> <a href="https://www.geeksforgeeks.org/multiple-color-detection-in-real-time-using-python-opencv" className="text-blue hover:underline">Color Detection:</a> </li>
+        <li><a href="https://people.ece.cornell.edu/land/courses/ece4760/FinalProjects/s2012/fas57_nyp7/Site/pidcontroller.html" className="text-blue hover:underline">PID controller information and pros and cons: </a></li>
+        <li>ChatGPT also helped explain some of the concepts. It helped provide the HSV slider code and helped with setting up ros services. <br/>It also helped prepare this writeup due to time constraints</li>
       </ul>
 
       <p className="mt-4">
         We would like to acknowledge the LI <span className="text-accent">Adam Parker</span> and the TAs 
         <span className="text-accent"> Dikshant, Jasper</span> and <span className="text-accent">Monta </span> 
-        for their assistance with explaining computer vision concepts and helping us troubleshoot our camera calibration and image processing challenges.
+        for their assistance with explaining computer vision concepts and being very accomodative during this exercise.
       </p>
     </div>
   );
