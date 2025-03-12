@@ -390,7 +390,7 @@ float32 distance<br/>
           <li>For balanced positioning, the net error should be zero (equidistant from both lanes)</li>
           <li>When only one lane was detected, we adjusted the error to maintain approximately 10cm from that lane</li>
           <li>This error value directly influenced the angular velocity (omega) for steering control</li>
-          <li>After tuning, we settled on gains of: <code className="bg-gray-800 px-2 py-1 rounded text-sm">Kp = 30, Kd = 0.7, Ki = 0.03</code></li>
+          <li>After tuning, we settled on gains of: <code className="bg-gray-800 px-2 py-1 rounded text-sm">Kp = 30, Kd = 0.7, Ki = 0.1</code></li>
         </ul>
         
         <h4 className="mt-4 text-l font-medium text-accent">Comparison of Controller Types</h4>
@@ -487,7 +487,7 @@ error = desired_distance (10cm) + white_lane_distance<br/>
         <p className="mt-4 font-medium text-accent">How does the integral (&quot;I&quot;) term in the PID controller affect performance? Was it useful for your robot?</p>
         <p className="mt-2">The integral term had mixed effects on our system:</p>
         <ul className="list-disc ml-6 mt-1 space-y-1">
-          <li>We kept the integral gain very small (Ki = 0.03) after testing</li>
+          <li>We kept the integral gain very small (Ki = 0.1) after testing</li>
           <li>Higher values consistently caused noticeable overshooting</li>
           <li>The small value helped address minor systematic biases</li>
           <li>Overall, this term had the smallest impact on our controller&apos;s performance</li>
@@ -501,7 +501,7 @@ error = desired_distance (10cm) + white_lane_distance<br/>
           <li>We later realized we could have applied the Ziegler-Nichols method: identified the ultimate gain where oscillations began, then calculated initial parameters. We will keep it in mind for next time</li>
           <li>It was taking a long time for us to set rebuild the bot for each gain value. We managed to find an alternative starting dts-gui-tools which provided a docker container where we copied our catkin package to. We ran catkin build on it and were able to run the package simply using the rosrun command while passing the gain values as command line arguments. (see alt_lane_following_controller.py in our repo) </li>
         </ol>
-        <p className="mt-2">The final parameters (Kp = 30, Kd = 0.7, Ki = 0.03) provided a good balance between responsive steering and stable lane following across the 1.5-meter test distance.</p>
+        <p className="mt-2">The final parameters (Kp = 30, Kd = 0.7, Ki = 0.1) provided a good balance between responsive steering and stable lane following across the 1.5-meter test distance.</p>
       </section>
 
       <h2 className="text-2xl font-semibold mt-6">Part 3. Lane Following</h2>
