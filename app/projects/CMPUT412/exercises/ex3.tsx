@@ -520,8 +520,8 @@ error = white_lane_distance - desired_distance (-10cm)<br/>
         <p>We then tried 30+ combinations of PID gain values and none of them seemed to work. Some actually came close but would eventually go to close to one lane suddenly make the bot irregular</p>
         
         <p>We even tried just following the yellow lane and encountered pretty much the same issue with the turns</p>
-        <p>To make development faster we even made it so that we could provide pid gain values as command line arguments. Normally we can't pass command line arguments to nodes since they run in a container on the bot. But we leveraged dt-gui-tools which provides a runtime container where we can run ROS nodes individually.
-          So we copied our catkin package directly to this container while it's running, ran catkin build followed by source setup/bash.sh commands and were able to run the subscriber nodes using rosrun.
+        <p>To make development faster we even made it so that we could provide pid gain values as command line arguments. Normally we can&apos;t pass command line arguments to nodes since they run in a container on the bot. But we leveraged dt-gui-tools which provides a runtime container where we can run ROS nodes individually.
+          So we copied our catkin package directly to this container while it&apos;s running, ran catkin build followed by source setup/bash.sh commands and were able to run the subscriber nodes using rosrun.
           <br/>While this helped speed stuff up, we did have an issue with delay and latency (discussed next), so we went back to regular building and running using devel build and devel run.
         </p>
         <p>Up until the moment of us writing this report, we believe that the major issue is with a combination of the omega values published to the bot being unreliable and there delay between what the bot is currently seeing through its camera and its actual position </p>
@@ -531,8 +531,8 @@ error = white_lane_distance - desired_distance (-10cm)<br/>
         <p>We solved both these issues by building our package on the bot directly and publishing both yellow and white lane results at the same time in the same message</p>
         <p>Just when we thought all our issues were solved, and the bot was moving properly at least for the first 25-30% of the lane, it would suddenly start veering off track and when we noticed the rqt_image_view footage from recording our screens, we noticed that the longer the subscriber (lane_following) node ran the more the lane_detection node started lagging</p>
         <p>This was a veryy weird situation. Before it was the lane-following node that lagged and it made sense, but now running the lane-following node was making the publisher lag and the lag increased the longer the subscriber node (lane following node) ran</p>
-        <p>At this point we had spent over 25 hours on just this part alone and asked many other groups about their implementation as well. We couldn't really find our mistake</p>
-        <p>My biggest suspicion right now is how the publisher-subscribers are set up and if we had more time, I would simply do both the detection and the control in a single node. This is what we will attempt to do for our exercise 4. Perhaps this delay had always existed but wasn't noticeable in the straight line tasks</p>
+        <p>At this point we had spent over 25 hours on just this part alone and asked many other groups about their implementation as well. We couldn&apos;t really find our mistake</p>
+        <p>My biggest suspicion right now is how the publisher-subscribers are set up and if we had more time, I would simply do both the detection and the control in a single node. This is what we will attempt to do for our exercise 4. Perhaps this delay had always existed but wasn&apos;t noticeable in the straight line tasks</p>
         <p>We would also just go back to using pixel distances instead of ground distance though I believe this should not make a difference as our ground distances seemed to be pretty accurate when we compared them with our own physical measurements of the lane distances</p>
         <p>Beyond all this, I guess the only thing we can try is to probably redo everything from scratch to see if we missed anything and probably tune our gains better.</p>
         </section>
