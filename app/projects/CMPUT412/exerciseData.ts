@@ -21,5 +21,12 @@ export const exercises = [
     image: "/CMPUT412_ex3.png",
     techStack: ["ROS", "Python", "OpenCV"],
   },
+  {
+    id: "finalEx",
+    title: "Final Project",
+    description: "Autonomus Driving test in Duckietown",
+    image: "/CMPUT412_final.png",
+    techStack: ["ROS", "Python", "OpenCV"],
+  }
   // Add more exercises as needed
 ]

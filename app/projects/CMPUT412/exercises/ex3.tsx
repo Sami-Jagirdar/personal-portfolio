@@ -1,7 +1,12 @@
 "use client";
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import Image from 'next/image';
+import { useState } from 'react';
 
 export default function Exercise3() {
+
+  const [p3IssueExpanded, setP3IssueExpanded] = useState(false);
+
   return (
     <div className="p-6 text-white">
       <h1 className="text-3xl font-bold">Exercise 3 - Computer Vision & Robotics</h1>
@@ -507,35 +512,60 @@ error = white_lane_distance - desired_distance (-10cm)<br/>
       </section>
 
       <h2 className="text-2xl font-semibold mt-6">Part 3. Lane Following</h2>
-      <section className='mt-4'>
-        <h3 className='text-l font-semibold text-accent'>Autonomous Oval Track Navigation</h3>
+        <h3 className='mt-4 text-l font-semibold text-accent'>Autonomous Oval Track Navigation</h3>
         <p>For the final part of the exercise, we attempted to use our lane detection and control system to navigate an oval track.</p>
-        <p>Unfortunately, despite our best efforts, we weren&apos;t able to come up with a system that could follow the oval lane due to a fair bit of challenges that we could honestly write an entire separate report on. As soon as we thought we solved one challenge, another would arise.</p>
-        <p>I will try to summarize the things we tried and the challenges we faced as best as I can</p>
-        <p>while the bot could follow a straight lane properly, it was at turns that it really stuggled. We started with our normal gain values and trying to stay in the center of the yellow and white lanes, but at turns the bot would not turn until the very last moment and the amount of rotation would be huge</p>
-        <p>It turned out that since we were doing the lane following in a different room, the white lane was brighter and the bot was not detecting it properly. We had to extend the HSV range</p>
-        <p>We even accounted for when only one of either the yellow or white lanes are seen and adjust how our bot moves accordingly since this would be a common occurrence during turns</p>
-        <p>We had many different ideas for this scenario and trying them all out with the bot&apos; limited battery life tooke extremely long</p>
-        <p>The best idea we came up with was assuming a default/dummy white lane at -0.15m from the bot if only a yellow lane is detected and similarly, assume a dummy yellow lane at a fixed distance if only the white lane is detected</p>
-        <p>We then tried 30+ combinations of PID gain values and none of them seemed to work. Some actually came close but would eventually go to close to one lane suddenly make the bot irregular</p>
+        <p className='mt-4'>Using the pid controller described above and our original code, we had ran into many issues.</p>
+        <button
+          className="flex items-center gap-2 text-amber-500 hover:underline mb-2"
+          onClick={() => setP3IssueExpanded((prev) => !prev)}
+        >
+          {p3IssueExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+          {p3IssueExpanded ? 'Collapse Details' : 'Expand for Full Description of Issues'}
+        </button>
+
+        {p3IssueExpanded && (
+          <div className='max-h-96 overflow-y-auto pr-2 space-y-3 border border-gray-300 rounded p-3 bg-black-50'>
+            <p>Unfortunately, despite our best efforts, we weren&apos;t able to come up with a system that could follow the oval lane due to a fair bit of challenges that we could honestly write an entire separate report on. As soon as we thought we solved one challenge, another would arise.</p>
+            <p>I will try to summarize the things we tried and the challenges we faced as best as I can</p>
+            <p>while the bot could follow a straight lane properly, it was at turns that it really stuggled. We started with our normal gain values and trying to stay in the center of the yellow and white lanes, but at turns the bot would not turn until the very last moment and the amount of rotation would be huge</p>
+            <p>It turned out that since we were doing the lane following in a different room, the white lane was brighter and the bot was not detecting it properly. We had to extend the HSV range</p>
+            <p>We even accounted for when only one of either the yellow or white lanes are seen and adjust how our bot moves accordingly since this would be a common occurrence during turns</p>
+            <p>We had many different ideas for this scenario and trying them all out with the bot&apos; limited battery life tooke extremely long</p>
+            <p>The best idea we came up with was assuming a default/dummy white lane at -0.15m from the bot if only a yellow lane is detected and similarly, assume a dummy yellow lane at a fixed distance if only the white lane is detected</p>
+            <p>We then tried 30+ combinations of PID gain values and none of them seemed to work. Some actually came close but would eventually go to close to one lane suddenly make the bot irregular</p>
+            
+            <p>We even tried just following the yellow lane and encountered pretty much the same issue with the turns</p>
+            <p>To make development faster we even made it so that we could provide pid gain values as command line arguments. Normally we can&apos;t pass command line arguments to nodes since they run in a container on the bot. But we leveraged dt-gui-tools which provides a runtime container where we can run ROS nodes individually.
+              So we copied our catkin package directly to this container while it&apos;s running, ran catkin build followed by source setup/bash.sh commands and were able to run the subscriber nodes using rosrun.
+              <br/>While this helped speed stuff up, we did have an issue with delay and latency (discussed next), so we went back to regular building and running using devel build and devel run.
+            </p>
+            <p>Up until the moment of us writing this report, we believe that the major issue is with a combination of the omega values published to the bot being unreliable and there delay between what the bot is currently seeing through its camera and its actual position </p>
+            <p>I would screen record each attempt of the bot&apos;s lane follow and print out omega (angular velocity) values both from the node that is publishing the lane detection results and the node that is subscribing to the lane detected distances to control omega.</p>
+            <p>We noticed a clear delay between the distances published by the lane_detection node and the distances received by the lane_following node at the same time instance</p>
+            <p>We managed to fix this issue by realizing that we were building and running the containers remotely. We also realized that the white and yellow lanes were being published at slightly different times in the lane-detection node, meaning our subscriber was getting mismatched distances for a particular time instance</p>
+            <p>We solved both these issues by building our package on the bot directly and publishing both yellow and white lane results at the same time in the same message</p>
+            <p>Just when we thought all our issues were solved, and the bot was moving properly at least for the first 25-30% of the lane, it would suddenly start veering off track and when we noticed the rqt_image_view footage from recording our screens, we noticed that the longer the subscriber (lane_following) node ran the more the lane_detection node started lagging</p>
+            <p>This was a veryy weird situation. Before it was the lane-following node that lagged and it made sense, but now running the lane-following node was making the publisher lag and the lag increased the longer the subscriber node (lane following node) ran</p>
+            <p>At this point we had spent over 25 hours on just this part alone and asked many other groups about their implementation as well. We couldn&apos;t really find our mistake</p>
+            <p>My biggest suspicion right now is how the publisher-subscribers are set up and if we had more time, I would simply do both the detection and the control in a single node. This is what we will attempt to do for our exercise 4. Perhaps this delay had always existed but wasn&apos;t noticeable in the straight line tasks</p>
+            <p>We would also just go back to using pixel distances instead of ground distance though I believe this should not make a difference as our ground distances seemed to be pretty accurate when we compared them with our own physical measurements of the lane distances</p>
+            <p>Beyond all this, I guess the only thing we can try is to probably redo everything from scratch to see if we missed anything and probably tune our gains better.</p>
+          </div>
+        )}
         
-        <p>We even tried just following the yellow lane and encountered pretty much the same issue with the turns</p>
-        <p>To make development faster we even made it so that we could provide pid gain values as command line arguments. Normally we can&apos;t pass command line arguments to nodes since they run in a container on the bot. But we leveraged dt-gui-tools which provides a runtime container where we can run ROS nodes individually.
-          So we copied our catkin package directly to this container while it&apos;s running, ran catkin build followed by source setup/bash.sh commands and were able to run the subscriber nodes using rosrun.
-          <br/>While this helped speed stuff up, we did have an issue with delay and latency (discussed next), so we went back to regular building and running using devel build and devel run.
+        <p className='mt-4'>
+          We decided to redo lane following from scratch
+          <ul className='list-disc ml-6'>
+            <li>This time we decided to not undistort the image and do minimal preprocessing</li>
+            <li>We also decided to not use the homography matrix and instead just use the pixel coordinates of the detected lanes. </li>
+            <li>After understanding the limitations of the duckiebot&apos;s memory, we realized that we should not be having many publishers for images in our node. This was likely one of the reasons for our bot lagging. Thus, we only had a single publisher for publishing the road mask. </li>
+            <li>Our new (Kp, Kd, Ki) values were (0.035, -0.0033, 0). That is, we just used a pd controller.</li>
+            <li>We also only follow the yellow lane on the left and switch to following the white lane only if the yellow lane is not detected.</li>
+          </ul>
+          We finally had a working system for lane following on any lane including curves and turns!
         </p>
-        <p>Up until the moment of us writing this report, we believe that the major issue is with a combination of the omega values published to the bot being unreliable and there delay between what the bot is currently seeing through its camera and its actual position </p>
-        <p>I would screen record each attempt of the bot&apos;s lane follow and print out omega (angular velocity) values both from the node that is publishing the lane detection results and the node that is subscribing to the lane detected distances to control omega.</p>
-        <p>We noticed a clear delay between the distances published by the lane_detection node and the distances received by the lane_following node at the same time instance</p>
-        <p>We managed to fix this issue by realizing that we were building and running the containers remotely. We also realized that the white and yellow lanes were being published at slightly different times in the lane-detection node, meaning our subscriber was getting mismatched distances for a particular time instance</p>
-        <p>We solved both these issues by building our package on the bot directly and publishing both yellow and white lane results at the same time in the same message</p>
-        <p>Just when we thought all our issues were solved, and the bot was moving properly at least for the first 25-30% of the lane, it would suddenly start veering off track and when we noticed the rqt_image_view footage from recording our screens, we noticed that the longer the subscriber (lane_following) node ran the more the lane_detection node started lagging</p>
-        <p>This was a veryy weird situation. Before it was the lane-following node that lagged and it made sense, but now running the lane-following node was making the publisher lag and the lag increased the longer the subscriber node (lane following node) ran</p>
-        <p>At this point we had spent over 25 hours on just this part alone and asked many other groups about their implementation as well. We couldn&apos;t really find our mistake</p>
-        <p>My biggest suspicion right now is how the publisher-subscribers are set up and if we had more time, I would simply do both the detection and the control in a single node. This is what we will attempt to do for our exercise 4. Perhaps this delay had always existed but wasn&apos;t noticeable in the straight line tasks</p>
-        <p>We would also just go back to using pixel distances instead of ground distance though I believe this should not make a difference as our ground distances seemed to be pretty accurate when we compared them with our own physical measurements of the lane distances</p>
-        <p>Beyond all this, I guess the only thing we can try is to probably redo everything from scratch to see if we missed anything and probably tune our gains better.</p>
-        </section>
+
+        <p className='mt-4'>Unfortunately, we did not have time to capture a video since this new implementation was done after exercise 3 as part of the final exercise for this course</p>
 
 
       {/* References section directly in the Exercise3 component */}
