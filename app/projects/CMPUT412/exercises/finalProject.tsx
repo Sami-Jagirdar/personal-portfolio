@@ -9,6 +9,17 @@ export default function FinalProject() {
             <p className="mt-4">Technologies used: <span className='text-accent'>Python, ROS, OpenCV, Duckietown</span> </p>
 
             <p className="mt-4">The final project for CMPUT 412 was to autonomously complete a 4 stage course, each with its own task.</p>
+            <div className="relative mt-6 w-full max-w-lg mx-auto flex justify-center">
+                <Image
+                    src="/full course diagram.jpg"
+                    alt="Duckiebot Setup"
+                    width={500}
+                    height={350}
+                    className="rounded-lg shadow-lg"
+                />
+            </div>
+            <p className="text-center text-sm text-gray-400 mt-2">Fig 0: Diagram of Duckietown with 4 stages</p>
+           
 
             <section className="mt-4">
             <h2 className="text-2xl font-semibold mt-6">Stage 1: Duckiebot Tailing</h2>
@@ -104,8 +115,8 @@ export default function FinalProject() {
                 <Image
                     src="/stage3.jpg"
                     alt="Duckiebot Setup"
-                    width={300}
-                    height={200}
+                    width={400}
+                    height={300}
                     className="rounded-lg shadow-lg"
                 />
             </div>
@@ -114,7 +125,7 @@ export default function FinalProject() {
             <div className="mt-6">
                 <h3 className="text-lg font-semibold text-accent">Waiting at Crosswalks</h3>
                 <p className="mt-2">
-                Crosswalks are determined by twp blue strips separated by a small gap. Between these gaps can be ducks crossing. These ducks have a darker yellow color compared to the lane, so they have their own HSV color range. <br/>
+                Crosswalks are determined by two blue strips separated by a small gap. Between these gaps can be ducks crossing. These ducks have a darker yellow color compared to the lane, so they have their own HSV color range. <br/>
                 Our bot must always stop at a crosswalk for a moment even if their are no peduckstrians crossing. If there are ducks crossing, our bot must keep waiting until the ducks have crossed (no longer there). 
                 <br/>If the ducks are not there, then the bot continues driving past the crosswalk and resumes lane following.
                 <br /><br />
@@ -146,8 +157,8 @@ export default function FinalProject() {
                 <Image
                     src="/stage4.jpg"
                     alt="Duckiebot Setup"
-                    width={300}
-                    height={200}
+                    width={400}
+                    height={300}
                     className="rounded-lg shadow-lg"
                 />
             </div>
@@ -172,11 +183,14 @@ export default function FinalProject() {
 
             <section className="mt-4">
             <h2 className="text-2xl font-semibold mt-6">Results</h2>
-            <p>We were given 3 rounds to attempt the entire 4 stage course and the best round would be chosen as our final score</p>
+            <p>We were given 3 rounds to attempt the entire 4 stage course and the best round would be chosen as our final score.</p>
+            <p>Each round was out of 125 points and any score obtained &gt;= 100 would be rewarded a 100% on the final project.</p>
 
             <h3 className="text-lg font-semibold text-accent mt-4">Round 1</h3>
             <p>We did pretty well this round up until stage 4. For some reason, after reaching the parking lot, it would just continue to lane follow and never attempt parking.</p>
-            <p>Our bot also had some issues with lane following, where it went to close to the white lane on certain turns </p>
+            <p>Our bot also had some issues with lane following, where it went too close to the white lane on certain turns. </p>
+            <p>Also, in stage 1, the leading bot was controlled using keyboard control. However, there was a delay between the keyboard input and the bot&apos;s movement and the leading bot was moving unreliably. This hindered our tailing at points where our bot could not see the back of the tailing bot and almost collided.</p>
+            <p>The TA controlling the leading bot decided to switch to moving it physically with their hands for the subsequent rounds.</p>
             <p className="text-amber-400">We scored a 75/125 for round 1</p>
 
             <h3 className="text-lg font-semibold text-accent mt-4">Round 2</h3>
@@ -186,8 +200,8 @@ export default function FinalProject() {
             <p className="text-amber-400">We scored a 65/125 for round 2</p>
 
             <h3 className="text-lg font-semibold text-accent mt-4">Round 3</h3>
-            <p>With only 1 more attempt at the course and our final grade on the line, we finally figured out the issue with the final stage. Turns out it was single if condition that had to check for the number of red stops to know that we need to park now. This if condition needed to check that more than 5 red stops had been detected. Instead it was checking if exactly 5 stops had been detected. (Yes our code could have been more robust to prevent a situation like this from happening, but we were very short on time by this point)</p>
-            <p>Changing this single condition made stage 4 be initiated. The downside was that this meant we only had once chance for our stage 4 to work</p>
+            <p>With only 1 more attempt at the course and our final grade on the line, we finally figured out the issue with the final stage. Turns out it was a single <b>if condition</b> that had to check for the number of red stops to know that we need to park now. This if condition needed to check that more than 5 red stops had been detected. Instead it was checking if exactly 5 stops had been detected. (Yes our code could have been more robust to prevent a situation like this from happening, but we were very short on time by this point)</p>
+            <p>Changing this single condition made stage 4 be initiated. The downside was that this meant we only had one chance for our stage 4 to work</p>
             <p>After some final tuning for our pd controllers and small touchups, we built the program on our bot and gave it a go.</p>
             <p className="text-amber-400">We scored a 105/125 for round 3!! This secured us a full 100% for the final project.</p>
             <br/><p>We pretty much did perfectly on stages 1 and 2. For stage 3, we only messed up in the maneuvering around the broken bot once. In stage 4, our bot had to be picked up once because it got stuck when rotating and trying to look for the apriltag with the parking ID, but eventually found it and parked in the right spot.</p>
@@ -198,7 +212,7 @@ export default function FinalProject() {
             <h2 className="text-2xl font-semibold mt-6">Final CMPUT412 Grade</h2>
             <div className="relative mt-6 w-full max-w-lg mx-auto flex justify-center">
                 <Image
-                    src="/final_cmput412_grade.jpg"
+                    src="/cmput412_grade.png"
                     alt="Duckiebot Setup"
                     width={400}
                     height={300}
