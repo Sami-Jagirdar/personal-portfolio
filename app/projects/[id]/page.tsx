@@ -19,6 +19,8 @@ const ProjectPage = ({ params }: { params: Promise<Params> }) => {
   }
 
   switch (project.id) {
+    case 'YOLOBrawlers':
+      return <div>Placeholder</div>
     case 'CMPUT412':
       return <CMPUT412/>;
     // Add more cases for additional projects

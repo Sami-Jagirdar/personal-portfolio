@@ -29,21 +29,22 @@ export default function ProjectCard({ id, title, description, image, techStack, 
             <Image
             src={image || "/logo.png"}
             alt={title}
-            className="object-cover object-top w-full h-full transition-transform duration-300 group-hover:scale-110"
+            className="object-fit object-top w-full h-full transition-transform duration-300 group-hover:scale-110"
             width={800}
             height={1000}
             />
         </div>
         <div className="p-6 space-y-4">
-            <h2 className="font-primary text-2xl">{title}</h2>
-            <p className="text-gray-400">{description}</p>
-
-                <div className="flex flex-wrap gap-2">
-                {techStack.map((tech) => (
-                    <span key={tech} className="px-3 py-1 text-sm bg-accent/10 text-accent rounded-full">
-                    {tech}
-                    </span>
-                ))}
+            <h2 className="font-primary text-2xl h-8 overflow-hidden text-ellipsis whitespace-nowrap">{title}</h2>
+            <p className="text-gray-400 h-24 overflow-auto card-scroll">{description}</p>
+              <div className="h-16">
+                  <div className="flex flex-wrap gap-2">
+                  {techStack.map((tech) => (
+                      <span key={tech} className="px-3 py-1 text-sm bg-accent/10 text-accent rounded-full">
+                      {tech}
+                      </span>
+                  ))}
+                  </div>
                 </div>
             </div>
         </Link>
