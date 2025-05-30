@@ -7,13 +7,17 @@ import { TbMenu2 } from "react-icons/tb";
 
 const links = [
     {
-        name: "About",
+        name: "Home",
         path: "/",
     },
     {
         name: "Projects",
         path: "/projects",
     },
+    {
+        name: "Experience",
+        path: "/experience",
+    }
 ]
 
 const MobileNavbar = () => {

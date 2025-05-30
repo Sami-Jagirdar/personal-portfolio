@@ -36,7 +36,7 @@ export const projects = [
     title: "RareQuest",
     description: "A 2D web-based RPG for promoting awareness/challenges of rare disease diagnosis. Built @ Morgan Stanley's 2024 Code to Give",
     image: "/RareQuest.png",
-    techStack: ["JavaScript", "Phaser.js", "Firebase"],
+    techStack: ["JavaScript", "Phaser.js", "Firebase", "Tiled"],
     links: {
       github: "https://github.com/owencooke/RareQuest",
       live: "https://rqmo12-game.web.app/"

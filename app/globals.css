@@ -136,6 +136,18 @@ body {
   scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
 }
 
+html::-webkit-scrollbar {
+  display: none;
+  background: transparent;
+  width: 0px;
+  height: 0px;
+}
+
+html {
+  -ms-overflow-style: none; 
+  scrollbar-width: none;
+}
+
 
 @layer base {
   body {

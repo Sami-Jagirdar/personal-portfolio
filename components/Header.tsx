@@ -11,13 +11,13 @@ export const changa_one = Changa_One({
 
 const Header = () => {
     return (
-        <header className="py-8 xl:py-12 text-white">
+        <header className="py-6 xl:py-8 text-white bg-zinc-950">
             <div className="container mx-auto flex justify-between items-center">
                 {/* For now, it's simple text, later design a logo */}
                 <Link href="/">
                     <h1 className={changa_one.className + ' text-4xl'} >Sami<span className="text-accent ml-2"> J.</span></h1>
                 </Link>
-
+                
                 <div className="hidden lg:flex items-center gap-4">
                     <Navbar />
                 </div>

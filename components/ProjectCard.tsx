@@ -22,7 +22,7 @@ export default function ProjectCard({ id, title, description, image, techStack, 
     <motion.div
       whileHover={{ y: -10 }}
       transition={{ duration: 0.3 }}
-      className="group relative bg-card rounded-xl overflow-hidden border border-accent/20 hover:border-accent shadow-xl"
+      className="group relative bg-gradient-to-br from-zinc-950 to-zinc-800 rounded-xl overflow-hidden border border-accent/20 hover:border-accent shadow-xl"
     >
       <Link href={`/projects/${id}`} className="block">
         <div className="aspect-video relative overflow-hidden">
