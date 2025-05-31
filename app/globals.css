@@ -148,6 +148,21 @@ html {
   scrollbar-width: none;
 }
 
+/* Add this to your CSS */
+#game-container {
+    width: 100%;
+    max-width: 1024px;
+    height: auto;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+}
+
+#game-container canvas {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100%;
+}
+
 
 @layer base {
   body {

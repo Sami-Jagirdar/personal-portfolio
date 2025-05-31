@@ -4,12 +4,25 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { ChevronUp, ChevronDown } from "lucide-react"
 import Image from "next/image"
+import { useRef } from "react"
+import {PhaserGameRef} from "@/app/game/PhaserGame"
+import dynamic from 'next/dynamic';
 
 export default function Home() {
   const [showMore, setShowMore] = useState(false)
 
   const slideUp = () => setShowMore(true)
   const slideDown = () => setShowMore(false)
+
+  const phaserRef = useRef<PhaserGameRef | null>(null);
+
+  const PhaserGame = dynamic(
+  () => import('@/app/game/PhaserGame').then(mod => ({ default: mod.PhaserGame })),
+  { 
+    ssr: false,
+    loading: () => <div className="loading">Loading game...</div>
+  }
+);
 
   return (
     <div className="relative h-screen overflow-hidden bg-gradient-to-br from-zinc-950 to-zinc-900">
@@ -96,6 +109,11 @@ export default function Home() {
           duration: 0.8,
         }}
       >
+
+        <div>
+          <PhaserGame ref={phaserRef} />
+        </div>
+
         <div className="text-center space-y-8 px-8 max-w-4xl">
 
           {/* Back Button */}
