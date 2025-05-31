@@ -22,6 +22,16 @@ const config = {
     },
     render: {
         pixelArt: true,  // Keeps pixel art crisp when scaling
+    },
+    input: {
+        keyboard: {
+            capture: [
+                Phaser.Input.Keyboard.KeyCodes.UP,
+                Phaser.Input.Keyboard.KeyCodes.DOWN,
+                Phaser.Input.Keyboard.KeyCodes.LEFT,
+                Phaser.Input.Keyboard.KeyCodes.RIGHT
+            ]
+        }
     }
 };
 

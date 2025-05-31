@@ -5,10 +5,12 @@ import { MainPlayer } from "../components/MainPlayer";
 class SamiBedroom extends Scene {
     player: MainPlayer | null;
     mizu: Phaser.GameObjects.Sprite | null;
+    cursors: Phaser.Types.Input.Keyboard.CursorKeys | null;
     constructor() {
         super("SamiBedroom");
         this.player = null;
-        this.mizu = null;;
+        this.mizu = null;
+        this.cursors = null;
     }
 
     init() {
@@ -112,6 +114,8 @@ class SamiBedroom extends Scene {
         // Starting point of player
         this.player = new MainPlayer(this, startingPoint.x, startingPoint.y, "down");
         this.cameras.main.startFollow(this.player);
+        this.cursors = this.input.keyboard?.createCursorKeys() || null;
+
 
         this.physics.add.collider(this.player, wallsLayer);
         this.physics.add.collider(this.player, wallPiecesLayer);
@@ -122,6 +126,12 @@ class SamiBedroom extends Scene {
         this.physics.add.overlap(this.player, exitRoom1, this.exitRoom1, undefined, this);
         this.physics.add.overlap(this.player, exitRoom2, this.exitRoom2, undefined, this);
         
+    }
+    
+    update() {
+        if (this.player && this.cursors) {
+            this.player.move2D(this.cursors);
+        }
     }
 
     exitRoom1() {
