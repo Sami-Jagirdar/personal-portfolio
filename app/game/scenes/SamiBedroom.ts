@@ -27,7 +27,7 @@ class SamiBedroom extends Scene {
         });
 
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-        // this.cameras.main.setZoom(0.5);
+        this.cameras.main.setZoom(0.75);
 
         // Add the tileset images - the tiled map was created a bit inefficiently resulting in many tilesets for the same room
         const genericTiles = map.addTilesetImage("1_Generic_48x48", "1_Generic_48x48");
@@ -65,18 +65,13 @@ class SamiBedroom extends Scene {
             livingRoomSinglesTiles,
             bedroomSinglesTiles,
         ];
-        for (const tileset of allTiles) {
-            // if (!tileset) {
-            //     console.error(`Tileset not found in the map`);
-            console.log(tileset);
-        }
 
         // Create layers from the tilemap - must be in the same order as in Tiled
         map.createLayer("Floor", allTiles, 0,0);
         const wallsLayer = map.createLayer("Wall", allTiles, 0,0);
         wallsLayer?.setCollisionByExclusion([-1]);
         const wallPiecesLayer = map.createLayer("Wall Pieces", allTiles, 0,0);
-        wallPiecesLayer?.setCollisionByExclusion([-1]);
+        // wallPiecesLayer?.setCollisionByExclusion([-1]);
         map.createLayer("floor pieces", allTiles, 0,0);
         const floorPieces2Layer = map.createLayer("floor pieces 2", allTiles, 0,0);
         floorPieces2Layer?.setCollisionByExclusion([-1]);

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { ChevronUp, ChevronDown } from "lucide-react"
+import { ChevronUp, ChevronDown, Play } from "lucide-react"
 import Image from "next/image"
 import { useRef } from "react"
 import {PhaserGameRef} from "@/app/game/PhaserGame"
@@ -10,19 +10,28 @@ import dynamic from 'next/dynamic';
 
 export default function Home() {
   const [showMore, setShowMore] = useState(false)
+  const [gameStarted, setGameStarted] = useState(false)
 
   const slideUp = () => setShowMore(true)
   const slideDown = () => setShowMore(false)
 
+  const startGame = () => {
+    setGameStarted(true)
+  }
+
   const phaserRef = useRef<PhaserGameRef | null>(null);
 
   const PhaserGame = dynamic(
-  () => import('@/app/game/PhaserGame').then(mod => ({ default: mod.PhaserGame })),
-  { 
-    ssr: false,
-    loading: () => <div className="loading">Loading game...</div>
-  }
-);
+    () => import('@/app/game/PhaserGame').then(mod => ({ default: mod.PhaserGame })),
+    { 
+      ssr: false,
+      loading: () => (
+        <div className="flex items-center justify-center w-96 h-96 bg-zinc-800 rounded-lg">
+          <div className="text-white">Loading game...</div>
+        </div>
+      )
+    }
+  );
 
   return (
     <div className="relative h-screen overflow-hidden bg-gradient-to-br from-zinc-950 to-zinc-900">
@@ -37,7 +46,7 @@ export default function Home() {
           duration: 0.8,
         }}
       >
-        <div className="text-center space-y-8 px-6 max-w-8xl">
+        <div className="text-center mt-16 space-y-8 px-6 max-w-8xl">
           <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -88,7 +97,7 @@ export default function Home() {
           >
             <button
               onClick={slideUp}
-              className="group flex items-center gap-3 mx-auto px-6 py-2 bg-zinc-800 text-white rounded-full border-accent  hover:bg-zinc-700 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+              className="group flex items-center gap-3 mx-auto px-6 py-2 bg-zinc-800 text-white rounded-full border-accent hover:bg-zinc-700 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
             >
               <span className="font-medium">Play to learn more!</span>
               <ChevronUp className="w-5 h-5 group-hover:translate-y-[-2px] transition-transform duration-300" />
@@ -97,9 +106,9 @@ export default function Home() {
         </div>
       </motion.div>
 
-      {/* More Content Section */}
+      {/* Game Section */}
       <motion.div
-        className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-950"
+        className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-950 overflow-y-auto"
         initial={{ y: "100%" }}
         animate={{ y: showMore ? "0%" : "100%" }}
         transition={{
@@ -109,12 +118,54 @@ export default function Home() {
           duration: 0.8,
         }}
       >
+        <div className="flex flex-col items-center justify-center min-h-screen py-8 space-y-8">
+          
+          {/* Game Instructions */}
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{
+              y: showMore ? 0 : 50,
+              opacity: showMore ? 1 : 0,
+            }}
+            transition={{ delay: showMore ? 0.3 : 0, duration: 0.6 }}
+            className="text-center space-y-4 px-6 max-w-2xl"
+          >
+            <h2 className="text-3xl font-bold text-accent italic">Sami&apos;s Space</h2>
+            <p className="text-gray-300 text-lg">
+              Use arrow keys to explore my space and discover more about my projects and experience!
+            </p>
+          </motion.div>
 
-        <div>
-          <PhaserGame ref={phaserRef} />
-        </div>
-
-        <div className="text-center space-y-8 px-8 max-w-4xl">
+          {/* Game Container */}
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{
+              y: showMore ? 0 : 50,
+              opacity: showMore ? 1 : 0,
+            }}
+            transition={{ delay: showMore ? 0.4 : 0, duration: 0.6 }}
+            className="relative"
+          >
+            <div className="w-96 h-96 bg-zinc-900 rounded-lg border-2 border-zinc-700 shadow-2xl overflow-hidden">
+              {!gameStarted ? (
+                <div className="flex flex-col items-center justify-center h-full space-y-4">
+                  <div className="w-16 h-16 bg-zinc-700 rounded-full flex items-center justify-center">
+                    <Play className="w-8 h-8 text-white ml-1" />
+                  </div>
+                  <button
+                    onClick={startGame}
+                    className="px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent/80 transition-colors font-medium"
+                  >
+                    Start Game
+                  </button>
+                </div>
+              ) : (
+                <div id="game-container" className="w-full h-full">
+                  <PhaserGame ref={phaserRef} />
+                </div>
+              )}
+            </div>
+          </motion.div>
 
           {/* Back Button */}
           <motion.div

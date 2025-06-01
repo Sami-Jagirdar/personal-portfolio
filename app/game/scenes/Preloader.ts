@@ -1,6 +1,6 @@
 import {Scene} from "phaser";
 
-const CHAR_FRAMES_PER_ROW = 9-1; // 9 frames in the spritesheet, 0-8 are valid indices
+const CHAR_FRAMES_PER_ROW = 9; // 9 frames in the spritesheet, 0-8 are valid indices
 
 export class Preloader extends Scene {
     constructor() {
@@ -58,8 +58,8 @@ export class Preloader extends Scene {
 
         // Load character spritesheet
         this.load.spritesheet("sami", "/sami_walk.png", {
-            frameWidth: 64,
-            frameHeight: 64,
+            frameWidth: 48,
+            frameHeight: 48,
         });
 
     }
@@ -76,7 +76,7 @@ export class Preloader extends Scene {
             key: "run-up",
             frames: this.anims.generateFrameNumbers("sami", {
                 start: 0,
-                end: CHAR_FRAMES_PER_ROW,
+                end: CHAR_FRAMES_PER_ROW - 1,
             }),
             frameRate: 10,
             repeat: -1,
@@ -85,8 +85,8 @@ export class Preloader extends Scene {
         this.anims.create({
             key: "run-left",
             frames: this.anims.generateFrameNumbers("sami", {
-                start: CHAR_FRAMES_PER_ROW + 1,
-                end: CHAR_FRAMES_PER_ROW * 2,
+                start: CHAR_FRAMES_PER_ROW ,
+                end: CHAR_FRAMES_PER_ROW*2 - 1,
             }),
             frameRate: 10,
             repeat: -1,
@@ -95,8 +95,8 @@ export class Preloader extends Scene {
         this.anims.create({
             key: "run-down",
             frames: this.anims.generateFrameNumbers("sami", {
-                start: CHAR_FRAMES_PER_ROW*2 + 1,
-                end: CHAR_FRAMES_PER_ROW * 3,
+                start: CHAR_FRAMES_PER_ROW*2,
+                end: CHAR_FRAMES_PER_ROW*3 - 1,
             }),
             frameRate: 10,
             repeat: -1,
@@ -105,8 +105,8 @@ export class Preloader extends Scene {
         this.anims.create({
             key: "run-right",
             frames: this.anims.generateFrameNumbers("sami", {
-                start: CHAR_FRAMES_PER_ROW*3 + 1,
-                end: CHAR_FRAMES_PER_ROW * 4,
+                start: CHAR_FRAMES_PER_ROW*3,
+                end: CHAR_FRAMES_PER_ROW*4 - 1,
             }),
             frameRate: 10,
             repeat: -1,
