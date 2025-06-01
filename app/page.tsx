@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { ChevronUp, ChevronDown, Play } from "lucide-react"
+import { ChevronUp, ChevronDown } from "lucide-react"
 import Image from "next/image"
 import { useRef } from "react"
 import {PhaserGameRef} from "@/app/game/PhaserGame"
@@ -149,9 +149,7 @@ export default function Home() {
             <div className="w-96 h-96 bg-zinc-900 rounded-lg border-2 border-zinc-700 shadow-2xl overflow-hidden">
               {!gameStarted ? (
                 <div className="flex flex-col items-center justify-center h-full space-y-4">
-                  <div className="w-16 h-16 bg-zinc-700 rounded-full flex items-center justify-center">
-                    <Play className="w-8 h-8 text-white ml-1" />
-                  </div>
+                 
                   <button
                     onClick={startGame}
                     className="px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent/80 transition-colors font-medium"

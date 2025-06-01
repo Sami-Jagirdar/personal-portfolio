@@ -6,11 +6,13 @@ class SamiBedroom extends Scene {
     player: MainPlayer | null;
     mizu: Phaser.GameObjects.Sprite | null;
     cursors: Phaser.Types.Input.Keyboard.CursorKeys | null;
+    interactionPrompt: Phaser.GameObjects.Text | null;
     constructor() {
         super("SamiBedroom");
         this.player = null;
         this.mizu = null;
         this.cursors = null;
+        this.interactionPrompt = null;
     }
 
     init() {
@@ -27,7 +29,7 @@ class SamiBedroom extends Scene {
         });
 
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-        this.cameras.main.setZoom(0.75);
+        // this.cameras.main.setZoom(0.75);
 
         // Add the tileset images - the tiled map was created a bit inefficiently resulting in many tilesets for the same room
         const genericTiles = map.addTilesetImage("1_Generic_48x48", "1_Generic_48x48");
@@ -66,6 +68,7 @@ class SamiBedroom extends Scene {
             bedroomSinglesTiles,
         ];
 
+       
         // Create layers from the tilemap - must be in the same order as in Tiled
         map.createLayer("Floor", allTiles, 0,0);
         const wallsLayer = map.createLayer("Wall", allTiles, 0,0);
@@ -82,15 +85,15 @@ class SamiBedroom extends Scene {
         assert(wallsLayer && wallPiecesLayer && floorPieces2Layer && floorPieces3Layer && floorPieces4Layer, "All layers must be created correctly");
 
         // Spawn points for the player when exiting rooms
-        const startingPoint = map.getObjectLayer("Player")?.objects[2];
+        const startingPoint = map.getObjectLayer("Player")?.objects[0];
         assert(startingPoint?.x && startingPoint?.y, "Player starting point must be defined in the map");
-        const room1EntryPoint = map.getObjectLayer("Player")?.objects[0];
+        const room1EntryPoint = map.getObjectLayer("Player")?.objects[1];
         assert(room1EntryPoint, "Room 1 entry point must be defined in the map");
-        const room2EntryPoint = map.getObjectLayer("Player")?.objects[1];
+        const room2EntryPoint = map.getObjectLayer("Player")?.objects[2];
         assert(room2EntryPoint, "Room 2 entry point must be defined in the map");
 
         // Create invisible static images for exit points
-        const exitRoom1Object = map.getObjectLayer("Door")?.objects[0];
+        const exitRoom1Object = map.getObjectLayer("Door")?.objects[1];
         assert(exitRoom1Object, "Exit point for room 1 must be defined in the map");
         const exitRoom1 = this.physics.add
             .staticImage(exitRoom1Object.x!, exitRoom1Object.y!, "")
@@ -98,13 +101,31 @@ class SamiBedroom extends Scene {
             .setSize(exitRoom1Object.width!, exitRoom1Object.height!)
             .setVisible(false);
 
-        const exitRoom2Object = map.getObjectLayer("Door")?.objects[1];
+        const exitRoom2Object = map.getObjectLayer("Door")?.objects[0];
         assert(exitRoom2Object, "Exit point for room 2 must be defined in the map");
         const exitRoom2 = this.physics.add
             .staticImage(exitRoom2Object.x!, exitRoom2Object.y!, "")
-            .setOrigin(0)
+            .setOrigin(exitRoom2Object.x!, exitRoom2Object.y!)
             .setSize(exitRoom2Object.width!, exitRoom2Object.height!)
             .setVisible(false);
+
+        // instantiate game objects
+        const gameObjects = map.getObjectLayer("GameObjects")?.objects || [];
+        this.interactionPrompt = this.add.text(
+            this.cameras.main.centerX, 
+            this.cameras.main.centerY + 250, 
+            gameObjects[1].name, 
+            {
+                fontSize: '30px',
+                backgroundColor: '#000000aa',
+                padding: { x: 12, y: 8 },
+            }
+        ).setOrigin(0.5).setVisible(true).setScrollFactor(0);
+        const projectsObj = this.physics.add
+            .staticSprite(gameObjects[1].x! + 56, gameObjects[1].y! + 56, "Projects")
+            .setSize(gameObjects[1].width!, gameObjects[1].height!)
+            .setScale(2)
+
 
         // Starting point of player
         this.player = new MainPlayer(this, startingPoint.x, startingPoint.y, "down");
@@ -120,6 +141,8 @@ class SamiBedroom extends Scene {
 
         this.physics.add.overlap(this.player, exitRoom1, this.exitRoom1, undefined, this);
         this.physics.add.overlap(this.player, exitRoom2, this.exitRoom2, undefined, this);
+        this.physics.add.overlap(this.player, projectsObj, this.handleNavigationText.bind(this, "Projects"), undefined, this);
+
         
     }
     
@@ -130,10 +153,20 @@ class SamiBedroom extends Scene {
     }
 
     exitRoom1() {
+        this.player?.play("run-down", true);
     }
 
     exitRoom2() {
     }
+
+    handleNavigationText = (pageName: string) => {
+        if (this.interactionPrompt) {
+                this.interactionPrompt
+                    .setText(`Press E to navigate to ${pageName}`)
+                    .setVisible(true);
+            }
+        }
+
 }
 
 export default SamiBedroom;

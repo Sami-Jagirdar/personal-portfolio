@@ -11,7 +11,7 @@ export const changa_one = Changa_One({
 
 const Header = () => {
     return (
-        <header className="py-6 xl:py-8 text-white bg-zinc-950">
+        <header className="py-6 xl:py-8 text-white bg-zinc-950 sticky">
             <div className="container mx-auto flex justify-between items-center">
                 {/* For now, it's simple text, later design a logo */}
                 <Link href="/">

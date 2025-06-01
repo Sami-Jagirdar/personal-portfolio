@@ -18,7 +18,7 @@ export class MainPlayer extends Physics.Arcade.Sprite {
         this.setScale(PLAYER.SCALE);
         this.setCollideWorldBounds(true);
         this.setSize(28, 16); // Smaller collision box
-        this.setOffset(10, 32); 
+        this.setOffset(16, 32); 
     } 
 
     move2D(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
