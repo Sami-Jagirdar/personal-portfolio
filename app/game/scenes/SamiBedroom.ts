@@ -116,16 +116,56 @@ class SamiBedroom extends Scene {
             this.cameras.main.centerY + 250, 
             gameObjects[1].name, 
             {
-                fontSize: '30px',
+                fontSize: '24px',
                 backgroundColor: '#000000aa',
                 padding: { x: 12, y: 8 },
             }
-        ).setOrigin(0.5).setVisible(true).setScrollFactor(0);
+        ).setOrigin(0.5).setVisible(false).setScrollFactor(0);
+
+
         const projectsObj = this.physics.add
-            .staticSprite(gameObjects[1].x! + 56, gameObjects[1].y! + 56, "Projects")
+            .sprite(gameObjects[1].x!, gameObjects[1].y!, "")
             .setSize(gameObjects[1].width!, gameObjects[1].height!)
             .setScale(2)
+            .setVisible(false)
 
+        const expObj = this.physics.add
+            .sprite(gameObjects[2].x!, gameObjects[2].y!, "")
+            .setSize(gameObjects[2].width!, gameObjects[2].height!)
+            .setScale(2)
+            .setVisible(false)
+
+        const contactObj = this.physics.add
+            .sprite(gameObjects[3].x!, gameObjects[3].y!, "")
+            .setSize(gameObjects[3].width!, gameObjects[3].height!)
+            .setScale(2)
+            .setVisible(false)
+
+        const glow = this.add.graphics();
+        glow.lineStyle(4, 0xd8404a, 0.8);
+
+        for (const obj of [projectsObj, expObj, contactObj]) {
+            glow.strokeRoundedRect(
+            obj.x!,
+            obj.y!,
+            obj.displayWidth + 20,
+            obj.displayHeight + 20,
+            8
+        );
+        }
+
+
+        // Animate the glow
+        this.tweens.add({
+            targets: glow,
+            alpha: { from: 0.3, to: 1 },
+            duration: 1000,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+
+        
 
         // Starting point of player
         this.player = new MainPlayer(this, startingPoint.x, startingPoint.y, "down");
@@ -142,6 +182,9 @@ class SamiBedroom extends Scene {
         this.physics.add.overlap(this.player, exitRoom1, this.exitRoom1, undefined, this);
         this.physics.add.overlap(this.player, exitRoom2, this.exitRoom2, undefined, this);
         this.physics.add.overlap(this.player, projectsObj, this.handleNavigationText.bind(this, "Projects"), undefined, this);
+        this.physics.add.overlap(this.player, contactObj, this.handleNavigationText.bind(this, "Contact"), undefined, this);
+        this.physics.add.overlap(this.player, expObj, this.handleNavigationText.bind(this, "Experience"), undefined, this);
+        
 
         
     }
@@ -162,7 +205,7 @@ class SamiBedroom extends Scene {
     handleNavigationText = (pageName: string) => {
         if (this.interactionPrompt) {
                 this.interactionPrompt
-                    .setText(`Press E to navigate to ${pageName}`)
+                    .setText(`Press E to navigate to my ${pageName} page`)
                     .setVisible(true);
             }
         }
