@@ -15,6 +15,10 @@ const links = [
     {
       name: "Experience",
       path: "/experience",
+    },
+    {
+      name: "Contact",
+      path: "/contact"
     }
 ]
 

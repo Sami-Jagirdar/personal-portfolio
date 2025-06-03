@@ -1,7 +1,8 @@
 'use client';
-import { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
+import { forwardRef, useEffect, useLayoutEffect, useRef, } from 'react';
 import StartGame from './main';
 import { EventBus } from './EventBus';
+import { InteractionData } from './scenes/SamiBedroom';
 
 // Type definitions
 export interface PhaserGameRef {
@@ -47,6 +48,14 @@ export const PhaserGame = forwardRef<PhaserGameRef, PhaserGameProps>(
       };
 
       EventBus.on('current-scene-ready', handleSceneReady);
+
+      EventBus.on("navigation-text", (interactionData: InteractionData) => {
+        const route = interactionData.route;
+        if (route) {
+          console.log(`Navigating to route: ${route}`);
+          window.location.href = route; // Reload the page to ensure the new scene is loaded
+        }
+      })
 
       return () => {
         EventBus.removeListener('current-scene-ready', handleSceneReady);

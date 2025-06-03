@@ -1,18 +1,30 @@
 import assert from "assert";
 import { Scene } from "phaser";
 import { MainPlayer } from "../components/MainPlayer";
+import { EventBus } from "../EventBus";
+
+export interface InteractionData {
+    name: string;
+    route: string;
+}
 
 class SamiBedroom extends Scene {
     player: MainPlayer | null;
     mizu: Phaser.GameObjects.Sprite | null;
     cursors: Phaser.Types.Input.Keyboard.CursorKeys | null;
     interactionPrompt: Phaser.GameObjects.Text | null;
+    eKey: Phaser.Input.Keyboard.Key | null;
+    currentInteraction: InteractionData | null;
+
     constructor() {
         super("SamiBedroom");
         this.player = null;
         this.mizu = null;
         this.cursors = null;
         this.interactionPrompt = null;
+        this.eKey = null;
+        this.currentInteraction = null;
+        
     }
 
     init() {
@@ -171,6 +183,8 @@ class SamiBedroom extends Scene {
         this.player = new MainPlayer(this, startingPoint.x, startingPoint.y, "down");
         this.cameras.main.startFollow(this.player);
         this.cursors = this.input.keyboard?.createCursorKeys() || null;
+        this.eKey = this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.E) || null;
+
 
 
         this.physics.add.collider(this.player, wallsLayer);
@@ -193,6 +207,16 @@ class SamiBedroom extends Scene {
         if (this.player && this.cursors) {
             this.player.move2D(this.cursors);
         }
+
+        // Check for interaction exit (when player moves away from objects)
+        this.checkInteractionExit();
+
+        // Handle E key press for navigation
+        if (this.eKey?.isDown && this.currentInteraction) {
+            EventBus.emit("navigation-text", this.currentInteraction);
+            this.interactionPrompt?.setVisible(false);
+            this.currentInteraction = null;
+        }
     }
 
     exitRoom1() {
@@ -208,7 +232,37 @@ class SamiBedroom extends Scene {
                     .setText(`Press E to navigate to my ${pageName} page`)
                     .setVisible(true);
             }
+        this.currentInteraction = {
+            name: pageName,
+            route: `/${pageName.toLowerCase()}`
+        };
+
+    }
+
+    checkInteractionExit = () => {
+        if (!this.currentInteraction || !this.player) return;
+
+        // Get all interaction objects
+        const gameObjects = this.physics.world.bodies.entries;
+        let isOverlapping = false;
+
+        // Check if player is still overlapping with any interaction object
+        for (const body of gameObjects) {
+            if (body.gameObject && body.gameObject !== this.player && 
+                this.physics.overlap(this.player, body.gameObject)) {
+                isOverlapping = true;
+                break;
+            }
         }
+
+        // If no longer overlapping, clear the interaction
+        if (!isOverlapping) {
+            this.currentInteraction = null;
+            if (this.interactionPrompt) {
+                this.interactionPrompt.setVisible(false);
+            }
+        }
+    }
 
 }
 

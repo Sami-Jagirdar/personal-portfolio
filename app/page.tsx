@@ -56,10 +56,10 @@ export default function Home() {
             >
               <div className="w-72 h-96 rounded-full overflow-hidden border-2 border-accent shadow-xl">
                 <Image
-                  src="/sami-portrait.JPG"
+                  src="/sami-portrait2.JPG"
                   alt="Sami Jagirdar"
                   width={320}
-                  height={320}
+                  height={160}
                   className="object-cover w-full h-full"
                   priority
                 />
@@ -81,7 +81,7 @@ export default function Home() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6, duration: 0.6 }}
-                className="text-lg md:text-xl text-gray-400 max-w-2xl leading-relaxed"
+                className="text-lg md:text-xl text-gray-200 max-w-2xl leading-relaxed"
               >
                 Welcome! I&apos;m a Software Engineer driven by the thrill of bringing bold ideas to life - crafting impactful software experiences across both digital and physical worlds, always with care and curiosity.
               </motion.p>
