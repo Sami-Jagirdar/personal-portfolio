@@ -34,7 +34,7 @@ const Projects = () => {
                   : 'opacity-0 translate-y-5'
               }`}
               style={{
-                transitionDelay: `${(index * 100) + 300}ms`
+                transitionDelay: `${(index * 200) + 200}ms`
               }}
             >
               <ProjectCard {...project} />
